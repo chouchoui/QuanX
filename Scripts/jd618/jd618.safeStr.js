@@ -1,5 +1,5 @@
 // https://api.m.jd.com/client.action?functionId=cakebaker_ckCollectScore
-// ^https:\/\/api.m.jd.com\/client.action\?functionId=cakebaker_ckCollectScore url script-request-body nzw9314/chouchoui/jd618.safeStr.js
+// ^https:\/\/api.m.jd.com\/client.action\?functionId=cakebaker_ckCollectScore url script-request-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/jd618/jd618.safeStr.js
 
 const cookieName = "chouchoui_jd_618_safeStr"
 function getParameterByName(params, name) {

@@ -1,6 +1,6 @@
 /*
  https://ngabbs.com/nuke.php?
- ^https:\/\/ngabbs.com\/nuke.php\?? url script-request-body nzw9314/chouchoui/nga/nga.cookie.js
+ ^https:\/\/ngabbs.com\/nuke.php\?? url script-request-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.js
 */
 
 
@@ -12,7 +12,7 @@ const bodyRegex = /__act=([_a-z]*)&(.*)&t=(\d*)/;
 
 if (bodyRegex.test($request.body)) {
 
-console.log($request.body)
+    console.log($request.body)
 
     let body = $request.body.replace(bodyRegex, "__act=check_in&$2&t=");
     const cookie = $request.headers["Cookie"];
@@ -20,7 +20,7 @@ console.log($request.body)
     $vei.write(body, $vei.body);
     $vei.write(cookie, $vei.cookie);
 
-    $vei.notify("nga刮墙", "cookie", "cookie获取成功")
+    $vei.notify("NGA刮墙", "Cookie", "Cookie获取成功")
 }
 
 

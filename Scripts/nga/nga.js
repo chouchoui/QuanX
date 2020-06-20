@@ -9,8 +9,8 @@ const xUserAgent = "'NGA_skull/7.0.4(iPhone10,3;iOS 13.6)'"
 const currentTimeSpan = Date.parse(new Date()) / 1000;
 
 if (!cookie || !body) {
-    console.log("nga刮墙，请获取cookie");
-    $vei.notify("nga刮墙", "刮墙失败", "请获取cookie");
+    console.log("NGA刮墙，请获取Cookie");
+    $vei.notify("NGA刮墙", "刮墙失败", "请获取Cookie");
 } else {
     const options = {
         url: "https://ngabbs.com/nuke.php?",
@@ -26,18 +26,18 @@ if (!cookie || !body) {
 
     $vei.post(options, (error, response, body) => {
         if (error) {
-            console.log("nga刮墙" + " " + error);
-            this.notify("nga刮墙", "刮墙失败", "请查看日志");
+            console.log("NGA刮墙" + " " + error);
+            this.notify("NGA刮墙", "刮墙失败", "请查看日志");
         } else if (response.status === 200) {
             console.log(body);
             const result = JSON.parse(body);
             if (result.error) {
-                $vei.notify("nga刮墙", "失败", result.error.join(";"));
+                $vei.notify("NGA刮墙", "失败", result.error.join(";"));
             } else if (result.data) {
                 const message = result.data[0];
                 const continued = result.data[1].continued;
                 const sum = result.data[1].sum;
-                $vei.notify("nga刮墙", "成功", `${message}，连续刮墙${continued}天，累计刮墙${sum}天`);
+                $vei.notify("NGA刮墙", "成功", `${message}，连续刮墙${continued}天，累计刮墙${sum}天`);
             }
         }
 
