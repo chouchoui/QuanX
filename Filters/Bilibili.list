@@ -1,0 +1,8 @@
+USER-AGENT,*bili*,Bilibili
+HOST-KEYWORD,bilibili,Bilibili
+HOST-SUFFIX,acgvideo.com,Bilibili
+HOST-SUFFIX,bilibili.com,Bilibili
+HOST-SUFFIX,hdslb.com,Bilibili
+HOST-SUFFIX,biliapi.net,Bilibili
+DOMAIN,upos-hz-mirrorakam.akamaized.net,Bilibili
+
