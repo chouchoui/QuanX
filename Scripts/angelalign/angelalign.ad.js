@@ -1,3 +1,4 @@
-let body = $response.body;
+let body = JSON.parse($response.body);
 body.data.data.splice(0, body.data.data.length);
-$done(body)
+body= JSON.stringify(body);
+$done({ body });
