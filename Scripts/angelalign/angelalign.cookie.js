@@ -1,7 +1,7 @@
 const $vei = init();
 $vei.headers = "vei_angelalign_headers";
 
-const headers = $request.headers;
+const headers = JSON.stringify($request.headers);
 console.log(headers);
 $vei.write(headers, $vei.headers);
 $vei.notify("时代天使", "Cookie", "Cookie获取成功");
