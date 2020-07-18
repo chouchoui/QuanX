@@ -10,7 +10,7 @@ ngabbs.com
 
 
 [task_local]
-10 0 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.js, tag=NGA刮墙, enabled=true
+10 0 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.js, tag=NGA刮墙, enabled=true, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.png
 ```
 
 ## 说明
