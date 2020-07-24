@@ -1,0 +1,51 @@
+{
+  "id": "vei.app.sub",
+  "name": "chouchoui 应用订阅",
+  "author": "@chouchoui",
+  "icon": "https://avatars3.githubusercontent.com/u/14866249?s=460&u=40faa1309b2303e1a3d9cec8f57f05c7005256de&v=4",
+  "repo": "https://github.com/chouchoui/QuanX",
+  "apps": [
+    {
+      "id": "vei.nga",
+      "name": "NGA",
+      "keys": [
+        "vei_nga_cookie",
+        "vei_nga_body"
+      ],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/nga",
+      "icons": [
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.png",
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.task.png"
+      ]
+    },
+    {
+      "id": "vei.angelalign",
+      "name": "时代天使小程序",
+      "keys": [
+        "vei_angelalign_headers"
+      ],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/angelalign",
+      "icons": [
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.png",
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.task.png"
+      ]
+    },
+    {
+      "id": "vei.qmkg",
+      "name": "全民K歌",
+      "keys": [
+        "vei_qmkg_url",
+        "vei_qmkg_headers",
+        "vei_qmkg_body"
+      ],
+      "author": "@GideonSenku, @chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/qmkg",
+      "icons": [
+        "https://raw.githubusercontent.com/Orz-3/mini/master/qmkg.png",
+        "https://raw.githubusercontent.com/Orz-3/task/master/qmkg.png"
+      ]
+    }
+  ]
+}

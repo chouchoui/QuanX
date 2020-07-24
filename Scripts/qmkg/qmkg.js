@@ -1,50 +1,41 @@
 const $vei = init();
-$vei.cookie = "vei_nga_cookie";
-$vei.body = "vei_nga_body";
+$vei.url = "vei_qmkg_url"
+$vei.headers = "vei_qmkg_headers";
+$vei.body = "vei_qmkg_body";
 
-const cookie = $vei.read($vei.cookie) || "";
-const body = $vei.read($vei.body) || "";
-const userAgent = 'NGA/7.0.4 (iPhone; iOS 13.6; Scale/3.00)';
-const xUserAgent = "'NGA_skull/7.0.4(iPhone10,3;iOS 13.6)'"
-const currentTimeSpan = Date.parse(new Date()) / 1000;
+const url = $vei.read($vei.url)
+const headers = $vei.read($vei.headers);
+const body = $vei.read($vei.body);
 
-if (!cookie || !body) {
-    console.log("NGA刮墙，请获取Cookie");
-    $vei.notify("NGA刮墙", "刮墙失败", "请获取Cookie");
-} else {
-    const options = {
-        url: "https://ngabbs.com/nuke.php?",
-        method: "POST",
-        headers: {
-            Cookie: cookie,
-            "User-Agent": userAgent,
-            "'X-User-Agent'": xUserAgent
-        },
-        'Content-Type': 'application/x-www-form-urlencoded',
-        body: `${body}${currentTimeSpan}`
-    }
-
-    $vei.post(options, (error, response, body) => {
+function sign() {
+    const options = { url: url, headers: JSON.parse(headers), body: body }
+    $vei.post(options, (error, response, data) => {
+        const title = "全民K歌";
         if (error) {
             console.log(error);
-            this.notify("NGA刮墙", "刮墙失败", "请查看日志");
+            this.notify(title, "签到结果: 失败", "请查看日志");
         } else if (response.status === 200) {
-            console.log(body);
-            const result = JSON.parse(body);
-            if (result.error) {
-                $vei.notify("NGA刮墙", "刮墙失败", result.error.join(";"));
-            } else if (result.data) {
-                const message = result.data[0];
-                const continued = result.data[1].continued;
-                const sum = result.data[1].sum;
-                $vei.notify("NGA刮墙", "刮墙成功", `${message}，连续刮墙${continued}天，累计刮墙${sum}天`);
+            const result = JSON.parse(data)
+            const total = result.data['task.revisionSignInGetAward'].total
+            const ret = result.data['task.revisionSignInGetAward'].ret
+            let subTitle = ``
+            let detail = ``
+            if (total != 0) {
+                const num = result.data['task.revisionSignInGetAward'].awards[0].num
+                subTitle = `签到结果: 成功`
+                detail = `获得鲜花: ${num}朵,已连续签到:${total}天`
+            } else if (ret == -11532) {
+                subTitle = `签到结果: 成功 (重复签到)`
+            } else {
+                subTitle = `签到结果: 失败`
             }
+            $vei.notify(title, subTitle, detail);
+            $vei.end();
         }
-
     })
 }
 
-
+sign()
 
 function init() {
     const isRequest = typeof $request != "undefined"
