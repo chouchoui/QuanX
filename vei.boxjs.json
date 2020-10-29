@@ -46,6 +46,19 @@
         "https://raw.githubusercontent.com/Orz-3/mini/master/qmkg.png",
         "https://raw.githubusercontent.com/Orz-3/task/master/qmkg.png"
       ]
+    },
+    {
+      "id": "vei.ikea20201028",
+      "name": "宜家20201028活动签到",
+      "keys": [
+        "vei_ikea_20201028_checkin_authorization"
+      ],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/ikea/20201028",
+      "icons": [
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/ikea/ikea.png",
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/ikea/ikea.task.png"
+      ]
     }
   ]
 }
