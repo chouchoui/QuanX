@@ -24,10 +24,17 @@ function checkin() {
           if (data.errorCode && data.errorCode === "710115") {
             $.msg($.name, data.message, $.desc);
           } else {
-            console.log(`----------${$.name}----------`);
-            console.log(resp);
-            console.log(data);
-            $.msg($.name, "可能签到成功，详细参见日志", $.desc);
+            if (data.message && data.message.includes("成功")) {
+              console.log(`----------${$.name}----------`);
+              const message = data.message.replace("/\n/g", "，");
+              const day = data.day;
+              $.msg($.name, message, `第${day}天`);
+            } else {
+              console.log(`----------${$.name}----------`);
+              console.log(resp);
+              console.log(data);
+              $.msg($.name, "状态未知，详细参见日志", $.desc);
+            }
           }
         }
       } catch (e) {
