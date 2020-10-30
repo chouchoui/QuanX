@@ -26,7 +26,7 @@ function checkin() {
           } else {
             if (data.message && data.message.includes("成功")) {
               console.log(`----------${$.name}----------`);
-              const message = data.message.replace("/\n/g", "，");
+              const message = data.message.replace(/\n/g, "，");
               const day = data.day;
               $.msg($.name, message, `第${day}天`);
             } else {
