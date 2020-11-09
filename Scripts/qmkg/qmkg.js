@@ -14,7 +14,6 @@ const headers = {
   Referer: $headers['Referer'],
   Host: $headers['Host'],
   'User-Agent': $headers['User-Agent'],
-  'Content-Length': $headers['Content-Length'],
   'No-Chunked': $headers['No-Chunked'],
   'Accept-Language': $headers['Accept-Language'],
   Connection: $headers['Connection'],
