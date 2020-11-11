@@ -5,30 +5,11 @@ const blackKey = "vei_bilibili_feed_black";
 //Customize blacklist
 let blacklist = [];
 if (magicJS.read(blackKey)) {
-  blacklist = JSON.parse(magicJS.read(blackKey));
+  blacklist = magicJS.read(blackKey).split(";");
 } else {
-  const defaultList = [
-    "共青团中央",
-    "广东共青团",
-    "浙江共青团",
-    "山东共青团",
-    "安徽共青团",
-    "河南共青团",
-    "央视频",
-    "徐大sao",
-    "翔翔大作战",
-    "徐大虾咯",
-    "敬汉卿",
-    "NathanRich火锅大王",
-    "央视网快看",
-    "央视新闻",
-    "央视网",
-    "新华社",
-    "人民网",
-    "观察者网",
-  ];
+  const defaultList = "共青团中央;广东共青团;浙江共青团;山东共青团;安徽共青团;河南共青团;央视频;徐大sao;翔翔大作战;徐大虾咯;敬汉卿;NathanRich火锅大王;央视网快看;央视新闻;央视网;新华社;人民网;观察者网";
   magicJS.write(blackKey, defaultList);
-  blacklist = defaultList;
+  blacklist = defaultList.split(";");
 }
 
 (() => {
