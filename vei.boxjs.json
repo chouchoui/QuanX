@@ -53,6 +53,18 @@
       "id": "vei.bilibili",
       "name": "bilibili去广告自定义",
       "keys": ["vei_bilibili_feed_black"],
+      "settings": [
+        {
+          "id": "vei_bilibili_feed_black",
+          "name": "手机号码",
+          "val": "",
+          "type": "textarea",
+          "placeholder": "[\"UP主名称\"]",
+          "autoGrow": true,
+          "rows": 5,
+          "desc": "JSON数组格式"
+        }
+      ],
       "author": "@blackmatrix7, @chouchoui",
       "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/bilibili",
       "icons": [
