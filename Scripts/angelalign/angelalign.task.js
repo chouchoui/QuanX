@@ -3,17 +3,27 @@ $vei.headers = "vei_angelalign_headers";
 
 const planUrl = `https://exp.angelalign.com/api/v1/mini_program/get_plan_list`;
 const method = `POST`;
-const headers = $vei.read($vei.headers);
+const headersStr = $vei.read($vei.headers);
 const planBody = `{"payload":{}}`;
 
-if (!headers) {
+if (!headersStr) {
   console.log("时代天使，请获取Cookie");
   $vei.notify("时代天使", "签到失败", "请获取Cookie");
 } else {
+  const $headers = JSON.parse(headersStr);
+  const headers = {
+    Cookie: $headers["Cookie"],
+    "Content-Type": $headers["Content-Type"],
+    Connection: $headers["Connection"],
+    "Accept-Encoding": $headers["Accept-Encoding"],
+    Host: $headers["Host"],
+    "User-Agent": $headers["User-Agent"],
+  };
+
   const planOptions = {
     url: planUrl,
     method,
-    headers: JSON.parse(headers),
+    headers: headers,
     body: planBody,
   };
 
@@ -43,7 +53,7 @@ if (!headers) {
         const eventOptions = {
           url: eventUrl,
           method,
-          headers: JSON.parse(headers),
+          headers: headers,
           body: JSON.stringify(eventBody),
         };
         $vei.post(eventOptions, (eventError, eventRes, eventResBody) => {
