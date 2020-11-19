@@ -14,6 +14,7 @@ if (magicJS.read(blackKey)) {
 }
 
 (() => {
+  let body = null;
   if (magicJS.isResponse) {
     switch (true) {
       // 推荐去广告
@@ -43,8 +44,7 @@ if (magicJS.read(blackKey)) {
             }
           }
           obj["data"]["items"] = items;
-          let body = JSON.stringify(obj);
-          magicJS.done({ body });
+          body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`推荐去广告出现异常：${err}`);
         }
@@ -55,19 +55,23 @@ if (magicJS.read(blackKey)) {
       ):
         try {
           let obj = JSON.parse(magicJS.response.body);
-          obj["data"]["max_time"] = 0;
-          obj["data"]["min_interval"] = 31536000;
-          obj["data"]["pull_interval"] = 31536000;
-          obj["data"]["show"]["stime"] = 1915027200;
-          obj["data"]["show"]["etime"] = 1924272000;
+          if (
+            obj["data"].hasOwnProperty("max_time") &&
+            obj["data"].hasOwnProperty("show")
+          ) {
+            obj["data"]["max_time"] = 0;
+            obj["data"]["min_interval"] = 31536000;
+            obj["data"]["pull_interval"] = 31536000;
+            obj["data"]["show"]["stime"] = 1915027200;
+            obj["data"]["show"]["etime"] = 1924272000;
+          }
           if (obj.hasOwnProperty("data") && obj["data"]["list"]) {
             for (let i = 0; i < obj["data"]["list"].length; i++) {
               obj["data"]["list"][i]["duration"] = 0;
               obj["data"]["list"][i]["begin_time"] = 1915027200;
               obj["data"]["list"][i]["end_time"] = 1924272000;
             }
-            let body = JSON.stringify(obj);
-            magicJS.done({ body });
+            body = JSON.stringify(obj);
           }
         } catch (err) {
           magicJS.logError(`开屏广告处理出现异常：${err}`);
@@ -80,7 +84,7 @@ if (magicJS.read(blackKey)) {
         try {
           const tabList = ["直播", "推荐", "热门", "追番", "影视"];
           const topList = ["消息"];
-          const bottomList = ["首页", "频道", "动态", "会员购", "我的"];
+          const bottomList = ["首页", "频道", "动态", "会员购", "我的", "消息"];
           let obj = JSON.parse(magicJS.response.body);
           if (obj["data"]["tab"]) {
             let tab = obj["data"]["tab"].filter((e) => {
@@ -105,8 +109,7 @@ if (magicJS.read(blackKey)) {
             });
             obj["data"]["bottom"] = bottom;
           }
-          let body = JSON.stringify(obj);
-          magicJS.done({ body });
+          body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`标签页处理出现异常：${err}`);
         }
@@ -145,8 +148,7 @@ if (magicJS.read(blackKey)) {
             return item3List.indexOf(e.title) >= 0;
           });
           obj["data"]["sections_v2"][3]["items"] = items3;
-          let body = JSON.stringify(obj);
-          magicJS.done({ body });
+          body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`我的页面处理出现异常：${err}`);
         }
@@ -158,8 +160,7 @@ if (magicJS.read(blackKey)) {
         try {
           let obj = JSON.parse(magicJS.response.body);
           obj["data"]["activity_banner_info"] = null;
-          let body = JSON.stringify(obj);
-          magicJS.done({ body });
+          body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`直播去广告出现异常：${err}`);
         }
@@ -170,30 +171,27 @@ if (magicJS.read(blackKey)) {
       ):
         try {
           let obj = JSON.parse(magicJS.response.body);
-          if (obj["code"] === 0) {
-            for (let module of obj["result"]["modules"]) {
-              if (module["style"] === "banner") {
-                let items = module["items"].filter((e) => {
-                  return !(
-                    e.hasOwnProperty("source_content") &&
-                    e["source_content"].hasOwnProperty("ad_content")
-                  );
-                });
-                module["items"] = items;
-              }
-            }
+          for (let card of obj.data.cards) {
+            delete card["extra"];
           }
-          let body = JSON.stringify(obj);
-          magicJS.done({ body });
+          delete obj["data"]["attentions"];
+          body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`追番去广告出现异常：${err}`);
         }
         break;
       default:
+        magicJS.logWarning("触发意外的请求处理，请确认脚本或复写配置正常。");
         break;
     }
+  } else {
+    magicJS.logWarning("触发意外的请求处理，请确认脚本或复写配置正常。");
   }
-  magicJS.done();
+  if (body) {
+    magicJS.done({ body });
+  } else {
+    magicJS.done();
+  }
 })();
 
 // prettier-ignore
