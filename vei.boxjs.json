@@ -8,10 +8,7 @@
     {
       "id": "vei.nga",
       "name": "NGA",
-      "keys": [
-        "vei_nga_cookie",
-        "vei_nga_body"
-      ],
+      "keys": ["vei_nga_cookie", "vei_nga_body"],
       "author": "@chouchoui",
       "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/nga",
       "icons": [
@@ -22,9 +19,7 @@
     {
       "id": "vei.angelalign",
       "name": "时代天使小程序",
-      "keys": [
-        "vei_angelalign_headers"
-      ],
+      "keys": ["vei_angelalign_headers"],
       "author": "@chouchoui",
       "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/angelalign",
       "icons": [
@@ -35,16 +30,46 @@
     {
       "id": "vei.qmkg",
       "name": "全民K歌",
-      "keys": [
-        "vei_qmkg_url",
-        "vei_qmkg_headers",
-        "vei_qmkg_body"
-      ],
+      "keys": ["vei_qmkg_url", "vei_qmkg_headers", "vei_qmkg_body"],
       "author": "@GideonSenku, @chouchoui",
       "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/qmkg",
       "icons": [
         "https://raw.githubusercontent.com/Orz-3/mini/master/qmkg.png",
         "https://raw.githubusercontent.com/Orz-3/task/master/qmkg.png"
+      ]
+    },
+    {
+      "id": "vei.ikea20201028",
+      "name": "宜家20201028活动签到",
+      "keys": ["vei_ikea_20201028_checkin_authorization"],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/ikea/20201028",
+      "icons": [
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/ikea/ikea.png",
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/ikea/ikea.task.png"
+      ]
+    },
+    {
+      "id": "vei.bilibili",
+      "name": "bilibili去广告自定义",
+      "keys": ["vei_bilibili_feed_black"],
+      "settings": [
+        {
+          "id": "vei_bilibili_feed_black",
+          "name": "首页UP主黑名单",
+          "val": "",
+          "type": "textarea",
+          "placeholder": "UP主名称1;UP主名称2",
+          "autoGrow": true,
+          "rows": 5,
+          "desc": "以英文逗号分隔多个号码"
+        }
+      ],
+      "author": "@blackmatrix7, @chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/bilibili",
+      "icons": [
+        "https://raw.githubusercontent.com/Orz-3/mini/master/bilibili.png",
+        "https://raw.githubusercontent.com/Orz-3/task/master/bilibili.png"
       ]
     }
   ]
