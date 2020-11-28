@@ -14,7 +14,7 @@ if (!cookie || !contentType || !userAgent || !body) {
 } else {
   !(async () => {
     await checkin();
-    checkInCountAdd()
+    // checkInCountAdd()
   })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
@@ -22,8 +22,8 @@ if (!cookie || !contentType || !userAgent || !body) {
 
 function checkin() {
   const newBody = body
-  .replace(/name="__lib"\n\ncheck_in/, 'name="__lib"\n\ncheck_in')
-  .replace(/name="__act"\n\nget_stat/, 'name="__act"\n\ncheck_in');
+  .replace(/name="__lib"\r\n\r\ncheck_in/, 'name="__lib"\r\n\r\ncheck_in')
+  .replace(/name="__act"\r\n\r\nget_stat/, 'name="__act"\r\n\r\ncheck_in');
   const promise = new Promise((resolve) => {
     const options = {
       url: "https://ngabbs.com/nuke.php",
@@ -63,8 +63,8 @@ function checkin() {
 
 function checkInCountAdd(){
   const newBody = body
-  .replace(/name="__lib"\n\ncheck_in/, 'name="__lib"\n\nmission')
-  .replace(/name="__act"\n\nget_stat/, 'name="__act"\n\ncheckin_count_add');
+  .replace(/name="__lib"\r\n\r\ncheck_in/, 'name="__lib"\r\n\r\nmission')
+  .replace(/name="__act"\r\n\r\nget_stat/, 'name="__act"\r\n\r\ncheckin_count_add');
   const options = {
     url: "https://ngabbs.com/nuke.php",
     headers: {
