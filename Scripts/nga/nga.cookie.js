@@ -9,11 +9,15 @@ $.userAgent = "vei_nag_user_agent";
 $.body = "vei_nga_body";
 
 !(async () => {
-  if ($request.body.includes("check_in")) {
+  if (
+    $request.body.includes("------WebKitForm") &&
+    $request.body.includes("check_in") &&
+    $request.body.includes("get_stat")
+  ) {
     const cookie = $request.headers["Cookie"];
     const contentType = $request.headers["Content-Type"];
     const userAgent = $request.headers["User-Agent"];
-    const body = $request.body;
+    const body = $request.body.replace("get_stat", "check_in");
 
     $.setdata(cookie, $.cookie);
     $.setdata(contentType, $.contentType);
