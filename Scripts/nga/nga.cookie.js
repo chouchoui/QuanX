@@ -17,7 +17,7 @@ $.body = "vei_nga_body";
     const cookie = $request.headers["Cookie"];
     const contentType = $request.headers["Content-Type"];
     const userAgent = $request.headers["User-Agent"];
-    const body = $request.body.replace("get_stat", "check_in");
+    const body = $request.body;
 
     $.setdata(cookie, $.cookie);
     $.setdata(contentType, $.contentType);
