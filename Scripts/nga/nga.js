@@ -14,16 +14,16 @@ if (!cookie || !contentType || !userAgent || !body) {
 } else {
   !(async () => {
     await checkin();
-    // checkInCountAdd()
+    checkInCountAdd()
   })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
 }
 
 function checkin() {
-  const newBody = body
-  .replace(/name="__lib"\r\n\r\ncheck_in/, 'name="__lib"\r\n\r\ncheck_in')
-  .replace(/name="__act"\r\n\r\nget_stat/, 'name="__act"\r\n\r\ncheck_in');
+  const newBody = { ...JSON.parse(body) };
+  newBody["__lib"] = "check_in";
+  newBody["__act"] = "check_in";
   const promise = new Promise((resolve) => {
     const options = {
       url: "https://ngabbs.com/nuke.php",
@@ -32,7 +32,7 @@ function checkin() {
         Cookie: cookie,
         "User-Agent": userAgent,
       },
-      body: newBody,
+      body: ObjectToFormData(newBody, contentType),
     };
     $.post(options, (err, resp, data) => {
       try {
@@ -61,10 +61,12 @@ function checkin() {
   return promise;
 }
 
-function checkInCountAdd(){
-  const newBody = body
-  .replace(/name="__lib"\r\n\r\ncheck_in/, 'name="__lib"\r\n\r\nmission')
-  .replace(/name="__act"\r\n\r\nget_stat/, 'name="__act"\r\n\r\ncheckin_count_add');
+function checkInCountAdd() {
+  const newBody = { ...JSON.parse(body) };
+  newBody["__lib"] = "mission";
+  newBody["__act"] = "checkin_count_add";
+  newBody["no_compatible_fix"] = "1";
+  newBody["mid"] = "2";
   const options = {
     url: "https://ngabbs.com/nuke.php",
     headers: {
@@ -72,19 +74,44 @@ function checkInCountAdd(){
       Cookie: cookie,
       "User-Agent": userAgent,
     },
-    body: newBody,
+    body: ObjectToFormData(newBody, contentType),
   };
+
   $.post(options, (err, resp, data) => {
     try {
       if (err) {
         $.logErr(err, resp);
-      } else  {
-        $.log(resp)
+      } else {
+        console.log(resp);
       }
     } catch (e) {
       $.logErr(e, resp);
     }
   });
+}
+
+function ObjectToFormData(object, contentType) {
+  const boundary = contentType.split("; ")[1].split("=")[1];
+  const splitBoundary = `--${boundary}`;
+  var body = `${splitBoundary}\r\n`;
+  const array = [];
+  for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+      array.push({
+        name: key,
+        value: object[key],
+      });
+    }
+  }
+  var data = array.map((element) => {
+    var name = `Content-Disposition: form-data; name="${element.name}"`;
+    var entityString = `${name}\r\n\r\n${element.value}`;
+    return entityString;
+  });
+  body = `${body}${data.join(
+    `\r\n${splitBoundary}\r\n`
+  )}\r\n${splitBoundary}--\r\n`;
+  return body;
 }
 
 /***************** Env *****************/
