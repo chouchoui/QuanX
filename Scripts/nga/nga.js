@@ -14,7 +14,7 @@ if (!cookie || !contentType || !userAgent || !body) {
 } else {
   !(async () => {
     await checkin();
-    checkInCountAdd()
+    checkInCountAdd();
   })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
@@ -62,31 +62,36 @@ function checkin() {
 }
 
 function checkInCountAdd() {
-  const newBody = { ...JSON.parse(body) };
-  newBody["__lib"] = "mission";
-  newBody["__act"] = "checkin_count_add";
-  newBody["no_compatible_fix"] = "1";
-  newBody["mid"] = "2";
-  const options = {
-    url: "https://ngabbs.com/nuke.php",
-    headers: {
-      "Content-Type": contentType,
-      Cookie: cookie,
-      "User-Agent": userAgent,
-    },
-    body: ObjectToFormData(newBody, contentType),
-  };
+  const missions = ["2", "30", "131"];
+  missions.forEach((mid) => {
+    setTimeout(() => {
+      const newBody = { ...JSON.parse(body) };
+      newBody["__lib"] = "mission";
+      newBody["__act"] = "checkin_count_add";
+      newBody["no_compatible_fix"] = "1";
+      newBody["mid"] = mid;
+      const options = {
+        url: "https://ngabbs.com/nuke.php",
+        headers: {
+          "Content-Type": contentType,
+          Cookie: cookie,
+          "User-Agent": userAgent,
+        },
+        body: ObjectToFormData(newBody, contentType),
+      };
 
-  $.post(options, (err, resp, data) => {
-    try {
-      if (err) {
-        $.logErr(err, resp);
-      } else {
-        console.log(resp);
-      }
-    } catch (e) {
-      $.logErr(e, resp);
-    }
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            $.logErr(err, resp);
+          } else {
+            console.log(resp);
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        }
+      });
+    }, 800);
   });
 }
 
