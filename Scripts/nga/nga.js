@@ -1,7 +1,7 @@
 const $ = new Env("NGA刮墙");
 $.cookie = "vei_nga_cookie";
-$.contentType = "vei_nag_content_type";
-$.userAgent = "vei_nag_user_agent";
+$.contentType = "vei_nga_content_type";
+$.userAgent = "vei_nga_user_agent";
 $.body = "vei_nga_body";
 
 const cookie = $.getdata($.cookie);
@@ -10,11 +10,14 @@ const userAgent = $.getdata($.userAgent);
 const body = $.getdata($.body);
 
 if (!cookie || !contentType || !userAgent || !body) {
-  $.msg($.name, "请更新脚本并重新获取获取Cookie", $.desc);
+  $.msg($.name, "请更新脚本并重新获取Cookie", $.desc);
 } else {
   !(async () => {
     await checkin();
-    checkInCountAdd();
+    const mids = await missions();
+    for (const mid of mids) {
+      await checkInCountAdd(mid)
+    }
   })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
@@ -61,38 +64,73 @@ function checkin() {
   return promise;
 }
 
-function checkInCountAdd() {
-  const missions = ["2", "30", "131"];
-  missions.forEach((mid) => {
-    setTimeout(() => {
-      const newBody = { ...JSON.parse(body) };
-      newBody["__lib"] = "mission";
-      newBody["__act"] = "checkin_count_add";
-      newBody["no_compatible_fix"] = "1";
-      newBody["mid"] = mid;
-      const options = {
-        url: "https://ngabbs.com/nuke.php",
-        headers: {
-          "Content-Type": contentType,
-          Cookie: cookie,
-          "User-Agent": userAgent,
-        },
-        body: ObjectToFormData(newBody, contentType),
-      };
+function missions() {
+  const promise = new Promise((resolve) => {
+    const newBody = { ...JSON.parse(body) };
+    newBody["__lib"] = "mission";
+    newBody["__act"] = "get_default";
+    newBody["get_success_repeat"] = "1";
+    newBody["no_compatible_fix"] = "1";
+    const options = {
+      url: "https://ngabbs.com/nuke.php",
+      headers: {
+        "Content-Type": contentType,
+        Cookie: cookie,
+        "User-Agent": userAgent,
+      },
+      body: ObjectToFormData(newBody, contentType),
+    };
 
-      $.post(options, (err, resp, data) => {
-        try {
-          if (err) {
-            $.logErr(err, resp);
-          } else {
-            console.log(resp);
-          }
-        } catch (e) {
-          $.logErr(e, resp);
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          $.logErr(err, resp);
+        } else {
+          const result = JSON.parse(data);
+          const mids = result.data[0].map((d) => d.id);
+          resolve(mids);
         }
-      });
-    }, 800);
+      } catch (e) {
+        $.logErr(e, resp);
+        resolve([]);
+      }
+    });
   });
+  return promise;
+}
+
+function checkInCountAdd(mid) {
+  const promise = new Promise((resolve) => {
+    const newBody = { ...JSON.parse(body) };
+    newBody["__lib"] = "mission";
+    newBody["__act"] = "checkin_count_add";
+    newBody["no_compatible_fix"] = "1";
+    newBody["mid"] = mid;
+    const options = {
+      url: "https://ngabbs.com/nuke.php",
+      headers: {
+        "Content-Type": contentType,
+        Cookie: cookie,
+        "User-Agent": userAgent,
+      },
+      body: ObjectToFormData(newBody, contentType),
+    };
+
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          $.logErr(err, resp);
+        } else {
+          console.log(`mission:${mid}`);
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve();
+      }
+    });
+  });
+  return promise;
 }
 
 function ObjectToFormData(object, contentType) {

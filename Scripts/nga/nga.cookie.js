@@ -1,32 +1,31 @@
 /*
- ^https:\/\/ngabbs.com\/nuke.php\?? url script-request-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.js
+ ^https:\/\/ngabbs.com\/nuke.php\?? url script-response-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.js
 */
 
 const $ = new Env("NGA刮墙");
 $.cookie = "vei_nga_cookie";
-$.contentType = "vei_nag_content_type";
-$.userAgent = "vei_nag_user_agent";
+$.contentType = "vei_nga_content_type";
+$.userAgent = "vei_nga_user_agent";
 $.body = "vei_nga_body";
 
 !(async () => {
-  if (
-    $request.body.includes("------WebKitForm") &&
-    $request.body.includes("check_in") &&
-    $request.body.includes("get_stat")
-  ) {
-    const cookie = $request.headers["Cookie"];
-    const contentType = $request.headers["Content-Type"];
-    const userAgent = $request.headers["User-Agent"];
-    const body = $request.body;
-
-    $.setdata(cookie, $.cookie);
-    $.setdata(contentType, $.contentType);
-    $.setdata(userAgent, $.userAgent);
+  if ($request.body.includes("------WebKitForm")) {
     var obj = FormDataToObject(body, contentType);
-    $.setdata(JSON.stringify(obj), $.body);
+    if (obj["__lib"] === "mission" && obj["__act"] === "get_default") {
+      const cookie = $request.headers["Cookie"];
+      const contentType = $request.headers["Content-Type"];
+      const userAgent = $request.headers["User-Agent"];
+      const body = $request.body;
 
-    $.subt = `获取会话: 成功! `;
-    $.msg($.name, $.subt, $.desc);
+      $.setdata(cookie, $.cookie);
+      $.setdata(contentType, $.contentType);
+      $.setdata(userAgent, $.userAgent);
+      var obj = FormDataToObject(body, contentType);
+      $.setdata(JSON.stringify(obj), $.body);
+
+      $.subt = `获取会话: 成功! `;
+      $.msg($.name, $.subt, $.desc);
+    }
   }
 })()
   .catch((e) => $.logErr(e))

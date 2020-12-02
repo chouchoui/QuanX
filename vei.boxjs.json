@@ -10,8 +10,9 @@
       "name": "NGA",
       "keys": [
         "vei_nga_cookie",
-        "vei_nag_content_type",
-        "vei_nag_user_agent",
+        "vei_nga_content_type",
+        "vei_nga_user_agent",
+        "vei_nga_mission",
         "vei_nga_body"
       ],
       "author": "@chouchoui",
