@@ -17,8 +17,8 @@ if (magicJS.read(blackKey)) {
   let body = null;
   if (magicJS.isResponse) {
     switch (true) {
-      // 推荐去广告
-      case /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index/.test(
+      // 推荐去广告，最后问号不能去掉，以免匹配到story模式
+      case /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\?/.test(
         magicJS.request.url
       ):
         try {
