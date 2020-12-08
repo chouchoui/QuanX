@@ -42,7 +42,7 @@ function checkin() {
         if (err) {
           $.logErr(err, resp);
           $.msg($.name, "刮墙失败，详细参见日志", err);
-        } else if (resp.status === 200) {
+        } else if (resp.status === "200") {
           console.log(data);
           const result = JSON.parse(data);
           if (result.error) {

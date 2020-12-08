@@ -31,7 +31,7 @@ if (!headersStr) {
     if (planError) {
       console.log("时代天使" + "\n\n" + planError);
       $vei.notify("时代天使", "获取plan list失败", "请查看日志");
-    } else if (planRes.status === 200) {
+    } else if (planRes.status === "200") {
       console.log(`时代天使planlist \n\n ${planResBody}`);
       const result = JSON.parse(planResBody);
       if (result.errmsg === "成功") {
@@ -60,7 +60,7 @@ if (!headersStr) {
           if (eventError) {
             console.log("时代天使" + "\n\n" + eventError);
             $vei.notify("时代天使", "签到失败", "请查看日志");
-          } else if (eventRes.status === 200) {
+          } else if (eventRes.status === "200") {
             console.log(`时代天使createevent\n\n${JSON.stringify(eventRes)}`);
             const eventResult = JSON.parse(eventResBody);
             if (eventResult.errmsg === "成功") {

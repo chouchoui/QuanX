@@ -26,7 +26,7 @@ function sign() {
     if (error) {
       console.log(error);
       this.notify(title, '签到结果: 失败', '请查看日志');
-    } else if (response.status === 200) {
+    } else if (response.status === "200") {
       const result = JSON.parse(data);
       const total = result.data['task.revisionSignInGetAward'].total;
       const ret = result.data['task.revisionSignInGetAward'].ret;
