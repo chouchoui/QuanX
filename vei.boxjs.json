@@ -77,6 +77,29 @@
         "https://raw.githubusercontent.com/Orz-3/mini/master/bilibili.png",
         "https://raw.githubusercontent.com/Orz-3/task/master/bilibili.png"
       ]
+    },
+    {
+      "id": "hackl0us.aqius",
+      "name": "将 iOS 系统原生 天气 App 的空气质量标准改为 AQI-US",
+      "keys": ["hackl0us_aqi_token"],
+      "settings": [
+        {
+          "id": "hackl0us_aqi_token",
+          "name": "aqicn API Token",
+          "val": "",
+          "type": "textarea",
+          "placeholder": "token",
+          "autoGrow": true,
+          "rows": 3,
+          "desc": ""
+        }
+      ],
+      "author": "@hackl0us",
+      "repo": "https://github.com/Hackl0us/SS-Rule-Snippet/tree/master/Scripts/Surge",
+      "icons": [
+        "https://raw.githubusercontent.com/Orz-3/mini/master/weather.png",
+        "https://raw.githubusercontent.com/Orz-3/task/master/weather.png"
+      ]
     }
   ]
 }
