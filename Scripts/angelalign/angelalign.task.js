@@ -70,10 +70,12 @@ if (!headersStr) {
               $vei.notify("时代天使", "签到失败", eventResult.errmsg);
             }
           }
+          $vei.end()
         });
       } else {
         console.log("时代天使createevent" + "\n\n" + result.errmsg);
         $vei.notify("时代天使", "获取plan list失败", result.errmsg);
+        $vei.end()
       }
     }
   });
