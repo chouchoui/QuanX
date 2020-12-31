@@ -5,6 +5,15 @@ $.token = "hackl0us_aqi_token";
 
 const aqicnToken = $.getdata($.token) || "";
 
+// STEP 2: 参考下方配置片段，在代理工具的配置文件中添加对应的配置。注意：script-path 后应该替换为添加 apicnToken 值后的脚本路径
+/*
+	[Script]
+	AQI-US = type=http-response, pattern=https://weather-data.apple.com/v1/weather/[\w-]+/[0-9]+\.[0-9]+/[0-9]+\.[0-9]+\?, requires-body=true, script-path=/path/to/iOS_Weather_AQI_Standard.js
+
+	[MITM]
+	hostname = weather-data.apple.com
+*/
+
 const AirQualityStandard = {
   CN: "HJ6332012.1",
   US: "EPA_NowCast.1",
@@ -60,7 +69,7 @@ function getPrimaryPollutant(pollutant) {
     case "o3":
       return "OZONE";
     default:
-      return "OTHER";
+      console.log("Unknown pollutant " + pollutant);
   }
 }
 
@@ -97,7 +106,7 @@ function constructAirQuailityNode(aqicnData) {
   };
   const aqicnIndex = aqicnData.aqi;
   airQualityNode.source = aqicnData.city.name;
-  airQualityNode.learnMoreURL = aqicnData.city.url + "/cn";
+  airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
   airQualityNode.airQualityCategoryIndex = classifyAirQualityLevel(aqicnIndex);
   airQualityNode.airQualityScale = AirQualityStandard.US;
   airQualityNode.airQualityIndex = aqicnIndex;
