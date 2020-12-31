@@ -28,12 +28,15 @@ if (magicJS.read(blackKey)) {
             if (item.hasOwnProperty("banner_item")) {
               let bannerItems = [];
               for (let banner of item["banner_item"]) {
-                if (banner["is_ad"] != true) {
+                if (banner["is_ad"] != true && banner["is_ad_loc"] != true) {
                   bannerItems.push(banner);
                 }
               }
-              item["banner_item"] = bannerItems;
-              items.push(item);
+              // 去除广告后，如果banner大于等于1个才添加到响应体
+              if (bannerItems.length >= 1) {
+                item["banner_item"] = bannerItems;
+                items.push(item);
+              }
             } else if (
               !item.hasOwnProperty("ad_info") &&
               !blacklist.includes(item["args"]["up_name"]) &&
@@ -83,25 +86,32 @@ if (magicJS.read(blackKey)) {
         magicJS.request.url
       ):
         try {
-          const tabList = ["直播", "推荐", "热门", "追番", "影视"];
-          const topList = ["消息"];
-          const bottomList = ["首页", "频道", "动态", "会员购", "我的", "消息"];
+          const tabList = new Set(["直播", "推荐", "热门", "追番", "影视"]);
+          const topList = new Set(["消息"]);
+          const bottomList = new Set([
+            "首页",
+            "频道",
+            "动态",
+            "会员购",
+            "我的",
+            "消息",
+          ]);
           let obj = JSON.parse(magicJS.response.body);
           if (obj["data"]["tab"]) {
             let tab = obj["data"]["tab"].filter((e) => {
-              return tabList.indexOf(e.name) >= 0;
+              return tabList.has(e.name);
             });
             obj["data"]["tab"] = tab;
           }
           if (obj["data"]["top"]) {
             let top = obj["data"]["top"].filter((e) => {
-              return topList.indexOf(e.name) >= 0;
+              return topList.has(e.name);
             });
             obj["data"]["top"] = top;
           }
           if (obj["data"]["bottom"]) {
             let bottom = obj["data"]["bottom"].filter((e) => {
-              return bottomList.indexOf(e.name) >= 0;
+              return bottomList.has(e.name);
             });
             bottom.forEach((element) => {
               if (element["name"] == "会员购") {
@@ -120,33 +130,41 @@ if (magicJS.read(blackKey)) {
         magicJS.request.url
       ):
         try {
-          const item0List = ["离线缓存", "历史记录", "我的收藏", "稍后再看"];
-          const item1List = ["创作首页", "稿件管理"];
-          const item2List = [
-            "看视频免流量",
+          const item0List = new Set([
+            "离线缓存",
+            "历史记录",
+            "我的收藏",
+            "稍后再看",
+          ]);
+          const item1List = new Set([
+            "创作首页",
+            "稿件管理",
+          ]);
+          const item2List = new Set([
+            "我的课程",
             "个性装扮",
             "我的钱包",
-            "会员购中心",
-          ];
-          const item3List = ["联系客服", "设置"];
+            "直播中心",
+          ]);
+          const item3List = new Set(["联系客服", "设置"]);
           let obj = JSON.parse(magicJS.response.body);
           let items0 = obj["data"]["sections_v2"][0]["items"].filter((e) => {
-            return item0List.indexOf(e.title) >= 0;
+            return item0List.has(e.title);
           });
           obj["data"]["sections_v2"][0]["items"] = items0;
           // 创作中心
           let items1 = obj["data"]["sections_v2"][1]["items"].filter((e) => {
-            return item1List.indexOf(e.title) >= 0;
+            return item1List.has(e.title);
           });
           obj["data"]["sections_v2"][1]["items"] = items1;
           // 推荐服务
           let items2 = obj["data"]["sections_v2"][2]["items"].filter((e) => {
-            return item2List.indexOf(e.title) >= 0;
+            return item2List.has(e.title);
           });
           obj["data"]["sections_v2"][2]["items"] = items2;
           // 更多服务，去掉课堂模式和青少年模式
           let items3 = obj["data"]["sections_v2"][3]["items"].filter((e) => {
-            return item3List.indexOf(e.title) >= 0;
+            return item3List.has(e.title);
           });
           obj["data"]["sections_v2"][3]["items"] = items3;
           body = JSON.stringify(obj);
@@ -179,6 +197,32 @@ if (magicJS.read(blackKey)) {
           body = JSON.stringify(obj);
         } catch (err) {
           magicJS.logError(`追番去广告出现异常：${err}`);
+        }
+        break;
+      // 动态去广告
+      case /^https?:\/\/api\.vc\.bilibili\.com\/dynamic_svr\/v1\/dynamic_svr\/dynamic_new\?/.test(
+        magicJS.request.url
+      ):
+        try {
+          let obj = JSON.parse(magicJS.response.body);
+          let cards = [];
+          obj.data.cards.forEach((element) => {
+            if (
+              element.hasOwnProperty("display") &&
+              element.card.indexOf("ad_ctx") <= 0
+            ) {
+              // 解决number类型精度问题导致B站动态中图片无法打开的问题
+              element["desc"]["dynamic_id"] = element["desc"]["dynamic_id_str"];
+              element["desc"]["pre_dy_id"] = element["desc"]["pre_dy_id_str"];
+              element["desc"]["orig_dy_id"] = element["desc"]["orig_dy_id_str"];
+              element["desc"]["rid"] = element["desc"]["rid_str"];
+              cards.push(element);
+            }
+          });
+          obj.data.cards = cards;
+          body = JSON.stringify(obj);
+        } catch (err) {
+          magicJS.logError(`动态去广告出现异常：${err}`);
         }
         break;
       default:
