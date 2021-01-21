@@ -42,7 +42,7 @@ function classifyAirQualityLevel(aqiIndex) {
     return AirQualityLevel.UNHEALTHY;
   } else if (aqiIndex >= 201 && aqiIndex <= 300) {
     return AirQualityLevel.VERY_UNHEALTHY;
-  } else if (aqiIndex >= 301 && aqiIndex <= 500) {
+  } else if (aqiIndex >= 301) {
     return AirQualityLevel.HAZARDOUS;
   }
 }
