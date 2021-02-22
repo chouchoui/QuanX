@@ -3,7 +3,7 @@
 #!system=ios
 [Script]
 
-AQI-US = type=http-response, pattern=https://weather-data.apple.com/v1/weather/[\w-]+/[0-9]+\.[0-9]+/[0-9]+\.[0-9]+\?, https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/iOS_Weather_AQI_Standard/index.js
+AQI-US = type=http-response, pattern=https://weather-data.apple.com/v1/weather/[\w-]+/[0-9]+\.[0-9]+/[0-9]+\.[0-9]+\?, script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/iOS_Weather_AQI_Standard/index.js
 
 [MITM]
 hostname = %APPEND% weather-data.apple.com
