@@ -144,14 +144,13 @@ function roundHours(time, method) {
 $.get(
   {
     url: `https://api.waqi.info/feed/geo:${lat};${lng}/?token=${aqicnToken}`,
-    headers: $request.headers,
   },
   (err, resp, data) => {
     try {
       if (err) {
         $.logErr(err, resp);
         let body = $response.body;
-        $done({ body });
+        $.done({ body });
       } else {
         let body = modifyWeatherResp($response.body, resp.body);
         $.done({ body });
@@ -159,7 +158,7 @@ $.get(
     } catch (e) {
       $.logErr(e, resp);
       let body = $response.body;
-      $done({ body });
+      $.done({ body });
     }
   }
 );
