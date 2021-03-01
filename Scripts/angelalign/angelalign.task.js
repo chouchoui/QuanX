@@ -6,7 +6,7 @@ const headersStr = $.getdata($.headers);
 const $headers = JSON.parse(headersStr);
 const headers = {
   Cookie: $headers["Cookie"],
-  "Content-Type": $headers["Content-Type"],
+  "Content-Type": "application/json",
   Connection: $headers["Connection"],
   "Accept-Encoding": $headers["Accept-Encoding"],
   Host: $headers["Host"],
