@@ -1,5 +1,5 @@
 const mobileWebRegex = /^https:\/\/m\.ithome\.com\/api\/news\/newslistpageget/;
-const appRegex = /^https:\/\/api\.ithome\.com\/json\/listpage\/news/;
+const appRegex = /^https:\/\/api\.ithome\.com\/json\/(listpage|newslist)\/news/;
 
 if (mobileWebRegex.test($request.url)) {
   const body = JSON.parse($response.body);
