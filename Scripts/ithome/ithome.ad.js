@@ -1,6 +1,6 @@
 const mobileWebRegex = /^https:\/\/m\.ithome\.com\/api\/news\/newslistpageget/;
 const appRegex = /^https:\/\/api\.ithome\.com\/json\/(listpage|newslist)\/news/;
-const appSlideRegex = /^https:\/\/api\.ithome\.com\/json\/slide\/index/;
+const appSlideRegex = /^https:\/\/api\.ithome\.com\/json\/slide\/index/;
 
 let body = JSON.parse($response.body);
 
