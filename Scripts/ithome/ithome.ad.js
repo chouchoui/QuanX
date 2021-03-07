@@ -9,8 +9,10 @@ if (mobileWebRegex.test($request.url)) {
 } else if (appRegex.test($request.url)) {
   body.newslist = body.newslist.filter((n) => !n.aid);
 } else if (appSlideRegex.test($request.url)) {
-  body = body.filter((i) => !i.isad);
+  const newList = body.filter((i) => !i.isad);
+  body.splice(0, body.length);
+  body.push(...newList);
 }
 
-body = JSON.stringify(body)
-$done({body});
+body = JSON.stringify(body);
+$done({ body });
