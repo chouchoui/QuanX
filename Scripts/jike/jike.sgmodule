@@ -1,0 +1,8 @@
+#!name=即刻
+#!desc=移除即刻APP动态广场中直播动态
+
+[Script]
+即刻移除直播 = type=http-response, pattern=^https:\/\/api\.ruguoapp\.com\/1\.0\/recommendFeed\/list, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/jike/jike.js
+
+[MITM]
+hostname=%APPEND% 47.99.112.78, api.ruguoapp.com
