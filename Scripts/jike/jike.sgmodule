@@ -1,6 +1,9 @@
 #!name=即刻
 #!desc=移除即刻APP动态广场中直播动态
 
+[Rule]
+IP-CIDR,203.107.1.1/24,REJECT-DROP,no-resolve
+
 [Script]
 即刻移除直播 = type=http-response, pattern=^https:\/\/api\.ruguoapp\.com\/1\.0\/recommendFeed\/list, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/jike/jike.js
 
