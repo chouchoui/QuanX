@@ -1,4 +1,4 @@
-hostname = 47.99.112.78, api.ruguoapp.com
+hostname = 47.99.112.78, *.ruguoapp.com
 
 ^https:\/\/api\.ruguoapp\.com\/1\.0\/devices\/collect url reject
 ^https:\/\/api\.ruguoapp\.com\/1\.0\/recommendFeed\/list url script-response-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/jike/jike.live.js
