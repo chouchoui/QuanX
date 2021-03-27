@@ -21,7 +21,7 @@ hostname=wechat.dairyqueen.com.cn
 
 
 [task_local]
-22 8,9 * * * ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info url script-request-header https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js, tag=DQ点单小程序签到, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.task.png, enabled=true
+22 8,9 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js, tag=DQ点单小程序签到, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.task.png, enabled=true
 ```
 
 
