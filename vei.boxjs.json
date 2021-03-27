@@ -56,6 +56,17 @@
       ]
     },
     {
+      "id": "vei.dq.sign",
+      "name": "DQ点单小程序签到",
+      "keys": ["vei_dq_wechat_cookie"],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/dq",
+      "icons": [
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.png",
+        "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.task.png"
+      ]
+    },
+    {
       "id": "vei.bilibili",
       "name": "bilibili去广告自定义",
       "keys": ["vei_bilibili_feed_black"],
