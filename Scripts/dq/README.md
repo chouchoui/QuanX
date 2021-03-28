@@ -3,21 +3,21 @@
 ## Surge配置
 ```properties
 [Script]
-DQ点单小程序签到Cookie = type=http-request,pattern=^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
+DQ点单小程序签到Cookie = type=http-request,requires-body=1,pattern=#^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
 DQ点单小程序签到 = type=cron,cronexp="22 8,9 * * *",wake-system=1,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
 
 
 [MITM]
-hostname=wechat.dairyqueen.com.cn
+hostname=*.dairyqueen.com.cn
 ```
 
 ## Quantumult X配置
 ```properties
 [MITM]
-hostname=wechat.dairyqueen.com.cn
+hostname=*.dairyqueen.com.cn
 
 [rewrite_local]
-^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info url script-request-header https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
+#^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign url script-request-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
 
 
 [task_local]

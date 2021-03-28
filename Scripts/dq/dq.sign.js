@@ -1,40 +1,156 @@
 const $ = new Env("DQ点单小程序签到");
-$.cookie = "vei_dq_wechat_cookie";
+$.url = "vei_dq_wechat_getSignUrl";
+$.body = "vei_dq_wechat_getSignBody";
 
 const isRequest = () => typeof $request !== "undefined" && typeof $response === "undefined";
+const timestamp = new Date().getTime();
 
 !(async () => {
   if (isRequest()) {
     getCookie();
   } else {
-    await sign();
+    const sign = await getXueLiSign();
+    await loginNoLandfall(sign);
+    await signIn();
   }
 })()
   .catch((e) => $.logErr(e))
   .finally(() => $.done());
 
 function getCookie() {
-  const cookie = $request.headers["Cookie"];
-  if (cookie && $.setdata(cookie, $.cookie)) {
-    $.subt = `获取会话: 成功!`;
-  } else {
-    $.subt = `获取会话: 失败!`;
+  const regex = /^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign/;
+  if (regex.test($request.url)) {
+    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body)) {
+      $.subt = `获取会话: 成功!`;
+    } else {
+      $.subt = `获取会话: 失败!`;
+    }
   }
   $.msg($.name, $.subt, $.desc);
 }
 
-function sign() {
+function getXueLiSign() {
+  const promise = new Promise((resolve, reject) => {
+    if ($.getdata($.body)) {
+      const body = JSON.parse($.getdata($.body));
+      body.content.timestamp = timestamp;
+
+      const headers = {
+        "Accept-Language": "zh-cn",
+        "Content-Type": "application/json;charset=utf-8",
+        "User-Agent":
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.3(0x18000315) NetType/WIFI Language/zh_CN miniProgram",
+        Connection: "keep-alive",
+      };
+
+      const options = {
+        url: $.getdata($.url),
+        headers: headers,
+        body: JSON.stringify(body),
+      };
+      $.post(options, (error, resp, data) => {
+        try {
+          if (error) {
+            $.logErr(error, resp);
+            $.msg($.name, "getXueLiSign结果: 失败", error);
+          } else if (resp.status === 200) {
+            const result = JSON.parse(data);
+            if (result.status === 1) {
+              subTitle = `签到结果: 成功`;
+              if (result.data && result.data.sign) {
+                resolve(result.data.sign);
+              } else {
+                subTitle = `getXueLiSign结果: 失败`;
+                detail = `详情参见日志`;
+                $.msg($.name, subTitle, detail);
+                throw new Error(JSON.stringify(resp));
+              }
+            } else {
+              subTitle = `getXueLiSign结果: 失败`;
+              detail = `${result.message}`;
+              $.msg($.name, subTitle, detail);
+              throw new Error(result.message);
+            }
+          }
+        } catch (error) {
+          $.logErr(error, resp);
+          reject(error);
+        }
+      });
+    } else {
+      reject("请获取Cookie");
+      $.msg($.name, "签到失败", "请获取Cookie");
+    }
+  });
+  return promise;
+}
+
+function loginNoLandfall(sign) {
+  if ($.getdata($.body)) {
+    const body = JSON.parse($.getdata($.body)).content;
+    body.timestamp = timestamp;
+    body.sign = sign;
+
+    const headers = {
+      Host: "wechat.dairyqueen.com.cn",
+      channel: `${body.channelId}`,
+      tenant: `${body.tenantId}`,
+      "Accept-Language": "zh-cn",
+      "Content-Type": "application/json;charset=utf-8",
+      Origin: "https://wechat.dairyqueen.com.cn",
+      "User-Agent":
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.3(0x18000315) NetType/WIFI Language/zh_CN miniProgram",
+      Connection: "keep-alive",
+    };
+
+    const options = {
+      url: "https://wechat.dairyqueen.com.cn/loginNoLandfall",
+      headers: headers,
+      body: JSON.stringify(body),
+    };
+
+    const promise = new Promise((resolve, reject) => {
+      $.post(options, (error, resp, data) => {
+        try {
+          if (error) {
+            $.logErr(error, resp);
+            $.msg($.name, "loginNoLandfall结果: 失败", error);
+          } else if (resp.status === 200) {
+            const result = JSON.parse(data);
+            if (result.message === "success") {
+              resolve(JSON.stringify(resp));
+            } else {
+              subTitle = `loginNoLandfall结果: 失败`;
+              $.log("", result.message);
+              detail = `${result.message}`;
+              $.msg($.name, subTitle, detail);
+              throw new Error(result.message);
+            }
+          }
+        } catch (error) {
+          $.logErr(error, resp);
+          reject(error);
+        }
+      });
+    });
+    return promise;
+  } else {
+    $.msg($.name, "签到失败", "请获取Cookie");
+  }
+}
+
+function signIn() {
+  const body = JSON.parse($.getdata($.body)).content;
   const headers = {
     Host: "wechat.dairyqueen.com.cn",
-    channel: "311",
-    tenant: "1",
+    channel: `${body.channelId}`,
+    tenant: `${body.tenantId}`,
     "Accept-Language": "zh-cn",
     "Content-Type": "application/json;charset=utf-8",
     Origin: "https://wechat.dairyqueen.com.cn",
     "User-Agent":
       "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.3(0x18000315) NetType/WIFI Language/zh_CN miniProgram",
     Connection: "keep-alive",
-    Cookie: $.getdata($.cookie),
   };
 
   const options = {
