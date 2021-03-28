@@ -54,7 +54,7 @@
     {
       "id": "vei.dq.sign",
       "name": "DQ点单小程序签到",
-      "keys": ["vei_dq_wechat_cookie"],
+      "keys": ["vei_dq_wechat_getSignUrl", "vei_dq_wechat_getSignBody"],
       "author": "@chouchoui",
       "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/dq",
       "icons": [
