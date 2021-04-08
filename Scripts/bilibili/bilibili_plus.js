@@ -79,7 +79,7 @@ if (magicJS.read(blackKey)) {
           magicJS.logError(`开屏广告处理出现异常：${err}`);
         }
         break;
-      // 标签页处理
+      // 标签页处理，如去除会员购等等
       case /^https?:\/\/app\.bilibili\.com\/x\/resource\/show\/tab/.test(magicJS.request.url):
         try {
           // 442 开始为概念版id
@@ -87,7 +87,7 @@ if (magicJS.read(blackKey)) {
           // 107 概念版游戏中心，获取修改为Story模式
           const topList = new Set([176, 222, 107]);
           // 180 会员购 102 开始为概念版id
-          const bottomList = new Set([177, 178, 179, 180, 181, 102, 103, 104, 105, 106]);
+          const bottomList = new Set([177, 178, 179, 181, 102, 103, 104, 105, 106]);
           let obj = JSON.parse(magicJS.response.body);
           if (obj["data"]["tab"]) {
             let tab = obj["data"]["tab"].filter((e) => {
@@ -116,11 +116,6 @@ if (magicJS.read(blackKey)) {
           if (obj["data"]["bottom"]) {
             let bottom = obj["data"]["bottom"].filter((e) => {
               return bottomList.has(e.id);
-            });
-            bottom.forEach((element) => {
-              if (element["name"] == "会员购") {
-                element.name = "穷逼";
-              }
             });
             obj["data"]["bottom"] = bottom;
           }
