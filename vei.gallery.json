@@ -14,7 +14,7 @@
       "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.qx.conf, tag=IT之家签到Cookie获取"
     },
     {
-      "config": "30 8,13,19 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.task.js, tag=时代天使, enabled=true, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.png",
+      "config": "30 8,13,19 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.task.js, tag=时代天使, enabled=true, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.task.png",
       "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.cookie.qx.conf, tag=时代天使Cookie获取"
     }
   ],
