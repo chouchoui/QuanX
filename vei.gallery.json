@@ -1,0 +1,22 @@
+{
+  "name": "Vei Task Scripts",
+  "task": [
+    {
+      "config": "22 9,10 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js, tag=DQ点单小程序签到, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.task.png, enabled=true",
+      "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.cookie.qx.conf, tag=DQ点单小程序签到Cookie获取"
+    },
+    {
+      "config": "19 9,10 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.js, tag=NGA刮墙, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.task.png, enabled=true",
+      "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.qx.conf, tag=NGA刮墙Cookie获取"
+    },
+    {
+      "config": "17 9,10 * * * https://raw.githubusercontent.com/chavyleung/scripts/master/ithome/ithome.js, tag=IT之家签到, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/ithome.png, enabled=true",
+      "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.qx.conf, tag=IT之家签到Cookie获取"
+    },
+    {
+      "config": "30 8,13,19 * * * https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.task.js, tag=时代天使, enabled=true, img-url=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.png",
+      "addons": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/angelalign/angelalign.cookie.qx.conf, tag=时代天使Cookie获取"
+    }
+  ],
+  "description": "Vei签到脚本订阅"
+}
