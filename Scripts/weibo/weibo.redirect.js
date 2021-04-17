@@ -34,7 +34,7 @@ function getParameterByName(params, name) {
 function tools() {
   const isQuanX = typeof $task != "undefined";
   const isLoon = typeof $loon != "undefined";
-  const isSurge = typeof $httpClient != "undefined" && !_isLoon;
+  const isSurge = typeof $httpClient != "undefined" && !isLoon;
   this.notify = (title, subtitle, message, url) => {
     if (isLoon) $notification.post(title, subtitle, message, url);
     if (isQuanX) $notify(title, subtitle, message, { "open-url": url });
