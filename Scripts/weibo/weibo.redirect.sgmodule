@@ -1,0 +1,15 @@
+#!name=微博跳转
+#!desc=将微博国际版链接跳转到官方微博，将微博拦截链接跳转至Safari
+#!author=chouchoui
+
+
+[URL Rewrite]
+^https?:\/\/(share|weibointl)\.api\.weibo\.(cn|com)\/(share|portal)(.*)weibo_id=(.*) https://m.weibo.cn/status/$5 302
+
+[Script]
+# 微博国际版链接跳转 = type=http-request,pattern=^https?:\/\/(share|weibointl)\.api\.weibo\.(cn|com)\/(share|portal)(.*)weibo_id=(?<weiboId>.*),script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/weibo/weibo.redirect.js,script-update-interval=0
+微博拦截链接跳转 = type=http-request,pattern=^https:\/\/weibo\.cn\/sinaurl\?toasturl=(.*),script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/weibo/weibo.redirect.js,script-update-interval=0
+
+
+[MITM]
+hostname = %APPEND% share.api.weibo.cn, weibointl.api.weibo.cn, weibointl.api.weibo.com, weibo.cn
