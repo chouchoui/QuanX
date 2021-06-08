@@ -81,26 +81,28 @@ function getPrimaryPollutant(pollutant) {
 }
 
 function constructAirQuailityNode(aqicnData) {
+  const pollutantsUnit = isV1 ? "μg/m3" : isV2 ? "microgramsPerM3" : "";
+
   let airQualityNode = {
     source: "",
     learnMoreURL: "",
     isSignificant: true,
-    airQualityCategoryIndex: 1,
-    airQualityScale: "",
-    airQualityIndex: 0,
     pollutants: {
-      CO: { name: "CO", amount: 0, unit: "μg/m3" },
-      SO2: { name: "SO2", amount: 0, unit: "μg/m3" },
-      NO2: { name: "NO2", amount: 0, unit: "μg/m3" },
-      "PM2.5": { name: "PM2.5", amount: 0, unit: "μg/m3" },
-      OZONE: { name: "OZONE", amount: 0, unit: "μg/m3" },
-      PM10: { name: "PM10", amount: 0, unit: "μg/m3" },
+      CO: { name: "CO", amount: 0, unit: pollutantsUnit },
+      SO2: { name: "SO2", amount: 0, unit: pollutantsUnit },
+      NO2: { name: "NO2", amount: 0, unit: pollutantsUnit },
+      "PM2.5": { name: "PM2.5", amount: 0, unit: pollutantsUnit },
+      OZONE: { name: "OZONE", amount: 0, unit: pollutantsUnit },
+      PM10: { name: "PM10", amount: 0, unit: pollutantsUnit },
     },
     metadata: {},
     name: "AirQuality",
     primaryPollutant: "",
   };
   if (isV1) {
+    airQualityNode.airQualityCategoryIndex = 1;
+    airQualityNode.airQualityScale = "";
+    airQualityNode.airQualityIndex = 0;
     airQualityNode.metadata = {
       reported_time: 0,
       longitude: 0,
@@ -114,25 +116,27 @@ function constructAirQuailityNode(aqicnData) {
       data_source: 0,
     };
   } else if (isV2) {
+    airQualityNode.categoryIndex = 1;
+    airQualityNode.scale = "";
+    airQualityNode.index = 0;
+    airQualityNode.sourceType = "station";
     airQualityNode.metadata = {
-      reportedTime: 0,
-      longitude: 0,
-      providerName: "aqicn.org",
-      expireTime: 2,
-      providerLogo: "https://i.loli.net/2020/12/27/UqW23eZLFAIbxGV.png",
-      readTime: 2,
-      latitude: 0,
       version: 2,
-      language: "",
-      dataSource: 0,
+      longitude: 0,
+      providerLogo: "https://weather-data.apple.com/assets/QWeather.png",
+      providerName: "aqicn.org",
+      expireTime: "",
+      language: "zh-CN",
+      latitude: 0,
+      reportedTime: "",
+      readTime: "",
+      units: "m",
     };
   }
   const aqicnIndex = aqicnData.aqi;
   airQualityNode.source = aqicnData.city.name;
   airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
-  airQualityNode.airQualityCategoryIndex = classifyAirQualityLevel(aqicnIndex);
-  airQualityNode.airQualityScale = AirQualityStandard.US;
-  airQualityNode.airQualityIndex = aqicnIndex;
+
   airQualityNode.pollutants.CO.amount = aqicnData.iaqi.co?.v || -1;
   airQualityNode.pollutants.SO2.amount = aqicnData.iaqi.so2?.v || -1;
   airQualityNode.pollutants.NO2.amount = aqicnData.iaqi.no2?.v || -1;
@@ -142,12 +146,18 @@ function constructAirQuailityNode(aqicnData) {
   airQualityNode.metadata.latitude = aqicnData.city.geo[0];
   airQualityNode.metadata.longitude = aqicnData.city.geo[1];
   if (isV1) {
+    airQualityNode.airQualityCategoryIndex = classifyAirQualityLevel(aqicnIndex);
+    airQualityNode.airQualityScale = AirQualityStandard.US;
+    airQualityNode.airQualityIndex = aqicnIndex;
     airQualityNode.metadata.read_time = roundHours(new Date(), "down");
     airQualityNode.metadata.expire_time = roundHours(new Date(), "up");
     airQualityNode.metadata.reported_time = aqicnData.time.v;
   } else if (isV2) {
-    airQualityNode.metadata.readTime = roundHours(new Date(), "down");
-    airQualityNode.metadata.expireTime = roundHours(new Date(), "up");
+    airQualityNode.categoryIndex = classifyAirQualityLevel(aqicnIndex);
+    airQualityNode.scale = AirQualityStandard.US;
+    airQualityNode.index = aqicnIndex;
+    airQualityNode.metadata.readTime = roundHours(new Date(), "down").toISOString();
+    airQualityNode.metadata.expireTime = roundHours(new Date(), "up").toISOString();
     airQualityNode.metadata.reportedTime = aqicnData.time.v;
   }
   //airQualityNode.metadata.language = $request.headers['Accept-Language']
