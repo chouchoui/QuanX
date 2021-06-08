@@ -28,7 +28,7 @@ const AirQualityLevel = {
   HAZARDOUS: 6,
 };
 
-const coordRegex = /https:\/\/weather-data\.apple\.com\/v1\/weather\/[\w-]+\/([0-9]+\.[0-9]+)\/([0-9]+\.[0-9]+)\?/;
+const coordRegex = /https:\/\/weather-data\.apple\.com\/v\d\/weather\/[\w-]+\/([0-9]+\.[0-9]+)\/([0-9]+\.[0-9]+)\?/;
 const [_, lat, lng] = $request.url.match(coordRegex);
 
 function classifyAirQualityLevel(aqiIndex) {
