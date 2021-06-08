@@ -29,6 +29,8 @@ const AirQualityLevel = {
 };
 
 const coordRegex = /https:\/\/weather-data\.apple\.com\/v\d\/weather\/[\w-]+\/([0-9]+\.[0-9]+)\/([0-9]+\.[0-9]+)\?/;
+const isV1 = $request.url.includes("/v1/");
+const isV2 = $request.url.includes("/v2/");
 const [_, lat, lng] = $request.url.match(coordRegex);
 
 function classifyAirQualityLevel(aqiIndex) {
@@ -50,7 +52,12 @@ function classifyAirQualityLevel(aqiIndex) {
 function modifyWeatherResp(weatherRespBody, aqicnRespBody) {
   let weatherRespJson = JSON.parse(weatherRespBody);
   let aqicnRespJson = JSON.parse(aqicnRespBody).data;
-  weatherRespJson.air_quality = constructAirQuailityNode(aqicnRespJson);
+  if (isV1) {
+    weatherRespJson.air_quality = constructAirQuailityNode(aqicnRespJson);
+  } else if (isV2) {
+    weatherRespJson.airQuality = constructAirQuailityNode(aqicnRespJson);
+  }
+
   return JSON.stringify(weatherRespJson);
 }
 
@@ -89,7 +96,12 @@ function constructAirQuailityNode(aqicnData) {
       OZONE: { name: "OZONE", amount: 0, unit: "μg/m3" },
       PM10: { name: "PM10", amount: 0, unit: "μg/m3" },
     },
-    metadata: {
+    metadata: {},
+    name: "AirQuality",
+    primaryPollutant: "",
+  };
+  if (isV1) {
+    airQualityNode.metadata = {
       reported_time: 0,
       longitude: 0,
       provider_name: "aqicn.org",
@@ -100,10 +112,21 @@ function constructAirQuailityNode(aqicnData) {
       v: 1,
       language: "",
       data_source: 0,
-    },
-    name: "AirQuality",
-    primaryPollutant: "",
-  };
+    };
+  } else if (isV2) {
+    airQualityNode.metadata = {
+      reportedTime: 0,
+      longitude: 0,
+      providerName: "aqicn.org",
+      expireTime: 2,
+      providerLogo: "https://i.loli.net/2020/12/27/UqW23eZLFAIbxGV.png",
+      readTime: 2,
+      latitude: 0,
+      version: 2,
+      language: "",
+      dataSource: 0,
+    };
+  }
   const aqicnIndex = aqicnData.aqi;
   airQualityNode.source = aqicnData.city.name;
   airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
@@ -118,9 +141,15 @@ function constructAirQuailityNode(aqicnData) {
   airQualityNode.pollutants.PM10.amount = aqicnData.iaqi.pm10?.v || -1;
   airQualityNode.metadata.latitude = aqicnData.city.geo[0];
   airQualityNode.metadata.longitude = aqicnData.city.geo[1];
-  airQualityNode.metadata.read_time = roundHours(new Date(), "down");
-  airQualityNode.metadata.expire_time = roundHours(new Date(), "up");
-  airQualityNode.metadata.reported_time = aqicnData.time.v;
+  if (isV1) {
+    airQualityNode.metadata.read_time = roundHours(new Date(), "down");
+    airQualityNode.metadata.expire_time = roundHours(new Date(), "up");
+    airQualityNode.metadata.reported_time = aqicnData.time.v;
+  } else if (isV2) {
+    airQualityNode.metadata.readTime = roundHours(new Date(), "down");
+    airQualityNode.metadata.expireTime = roundHours(new Date(), "up");
+    airQualityNode.metadata.reportedTime = aqicnData.time.v;
+  }
   //airQualityNode.metadata.language = $request.headers['Accept-Language']
   airQualityNode.primaryPollutant = getPrimaryPollutant(aqicnData.dominentpol);
   return airQualityNode;
