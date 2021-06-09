@@ -5,18 +5,9 @@ $.token = "hackl0us_aqi_token";
 
 const aqicnToken = $.getdata($.token) || "";
 
-// STEP 2: 参考下方配置片段，在代理工具的配置文件中添加对应的配置。注意：script-path 后应该替换为添加 apicnToken 值后的脚本路径
-/*
-	[Script]
-	AQI-US = type=http-response, pattern=https://weather-data.apple.com/v1/weather/[\w-]+/[0-9]+\.[0-9]+/[0-9]+\.[0-9]+\?, requires-body=true, script-path=/path/to/iOS_Weather_AQI_Standard.js
-
-	[MITM]
-	hostname = weather-data.apple.com
-*/
-
 const AirQualityStandard = {
-  CN: "HJ6332012.1",
-  US: "EPA_NowCast.1",
+  CN: "HJ6332012.4",
+  US: "EPA_NowCast.4",
 };
 
 const AirQualityLevel = {
@@ -50,7 +41,7 @@ function classifyAirQualityLevel(aqiIndex) {
 function modifyWeatherResp(weatherRespBody, aqicnRespBody) {
   let weatherRespJson = JSON.parse(weatherRespBody);
   let aqicnRespJson = JSON.parse(aqicnRespBody).data;
-  weatherRespJson.airQuality = constructAirQuailityNode(aqicnRespJson);
+  weatherRespJson.airQuality = constructAirQuailityNode(weatherRespJson.airQuality, aqicnRespJson);
   return JSON.stringify(weatherRespJson);
 }
 
@@ -73,56 +64,26 @@ function getPrimaryPollutant(pollutant) {
   }
 }
 
-function constructAirQuailityNode(aqicnData) {
-  let airQualityNode = {
-    source: "",
-    learnMoreURL: "",
-    isSignificant: true,
-    categoryIndex: 1,
-    scale: "",
-    index: 0,
-    pollutants: {
-      CO: { name: "CO", amount: 0, unit: "microgramsPerM3" },
-      SO2: { name: "SO2", amount: 0, unit: "microgramsPerM3" },
-      NO2: { name: "NO2", amount: 0, unit: "microgramsPerM3" },
-      "PM2.5": { name: "PM2.5", amount: 0, unit: "microgramsPerM3" },
-      OZONE: { name: "OZONE", amount: 0, unit: "microgramsPerM3" },
-      PM10: { name: "PM10", amount: 0, unit: "microgramsPerM3" },
-    },
-    metadata: {
-      version: 2,
-      longitude: 0,
-      providerLogo: "https://i.loli.net/2020/12/27/UqW23eZLFAIbxGV.png",
-      providerName: "aqicn.org",
-      expireTime: "",
-      language: "zh-CN",
-      latitude: 0,
-      reportedTime: "",
-      readTime: "",
-      units: "m",
-    },
-    name: "AirQuality",
-    primaryPollutant: "",
-  };
+function constructAirQuailityNode(airQualityNode, aqicnData) {
   const aqicnIndex = aqicnData.aqi;
-  airQualityNode.source = aqicnData.city.name;
-  airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
-  airQualityNode.categoryIndex = classifyAirQualityLevel(aqicnIndex);
-  airQualityNode.scale = AirQualityStandard.US;
-  airQualityNode.index = aqicnIndex;
-  airQualityNode.pollutants.CO.amount = aqicnData.iaqi.co?.v || -1;
-  airQualityNode.pollutants.SO2.amount = aqicnData.iaqi.so2?.v || -1;
-  airQualityNode.pollutants.NO2.amount = aqicnData.iaqi.no2?.v || -1;
-  airQualityNode.pollutants["PM2.5"].amount = aqicnData.iaqi.pm25?.v || -1;
-  airQualityNode.pollutants.OZONE.amount = aqicnData.iaqi.o3?.v || -1;
-  airQualityNode.pollutants.PM10.amount = aqicnData.iaqi.pm10?.v || -1;
+
   airQualityNode.metadata.latitude = aqicnData.city.geo[0];
   airQualityNode.metadata.longitude = aqicnData.city.geo[1];
-  airQualityNode.metadata.readTime = roundHours(new Date(), "down").toISOString();
-  airQualityNode.metadata.expire_time = roundHours(new Date(), "up").toISOString();
-  airQualityNode.metadata.reported_time = new Date(aqicnData.time.v * 1000).toISOString();
-  //airQualityNode.metadata.language = $request.headers['Accept-Language']
+  airQualityNode.metadata.providerLogo = "https://i.loli.net/2020/12/27/UqW23eZLFAIbxGV.png";
+  airQualityNode.metadata.providerName = "aqicn.org";
+  airQualityNode.categoryIndex = classifyAirQualityLevel(aqicnIndex);
+  airQualityNode.index = aqicnIndex;
+  airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
+  airQualityNode.scale = AirQualityStandard.US;
+  airQualityNode.source = aqicnData.city.name;
   airQualityNode.primaryPollutant = getPrimaryPollutant(aqicnData.dominentpol);
+  airQualityNode.pollutants.NO2.amount = aqicnData.iaqi.no2?.v || -1;
+  airQualityNode.pollutants["PM2.5"].amount = aqicnData.iaqi.pm25?.v || -1;
+  airQualityNode.pollutants.SO2.amount = aqicnData.iaqi.so2?.v || -1;
+  airQualityNode.pollutants.OZONE.amount = aqicnData.iaqi.o3?.v || -1;
+  airQualityNode.pollutants.PM10.amount = aqicnData.iaqi.pm10?.v || -1;
+  airQualityNode.pollutants.CO.amount = aqicnData.iaqi.co?.v || -1;
+
   return airQualityNode;
 }
 
