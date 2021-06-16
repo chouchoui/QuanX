@@ -19,8 +19,9 @@ const AirQualityLevel = {
   HAZARDOUS: 6,
 };
 
-const coordRegex = /https:\/\/weather-data\.apple\.com\/v2\/weather\/[\w-]+\/([0-9]+\.[0-9]+)\/([0-9]+\.[0-9]+)\?/;
-const [_, lat, lng] = $request.url.match(coordRegex);
+const coordRegex =
+  /https:\/\/weather-data\.apple\.com\/v2\/weather\/([\w-]+)\/(-?[0-9]+\.[0-9]+)\/(-?[0-9]+\.[0-9]+)\?/;
+const [_, language, lat, lng] = $request.url.match(coordRegex);
 
 function classifyAirQualityLevel(aqiIndex) {
   if (aqiIndex >= 0 && aqiIndex <= 50) {
@@ -41,7 +42,7 @@ function classifyAirQualityLevel(aqiIndex) {
 function modifyWeatherResp(weatherRespBody, aqicnRespBody) {
   let weatherRespJson = JSON.parse(weatherRespBody);
   let aqicnRespJson = JSON.parse(aqicnRespBody).data;
-  weatherRespJson.airQuality = constructAirQuailityNode(weatherRespJson.airQuality, aqicnRespJson);
+  weatherRespJson.airQuality = constructAirQuailityNode(aqicnRespJson);
   return JSON.stringify(weatherRespJson);
 }
 
@@ -53,6 +54,8 @@ function getPrimaryPollutant(pollutant) {
       return "SO2";
     case "no2":
       return "NO2";
+    case "nox":
+      return "NOX";
     case "pm25":
       return "PM2.5";
     case "pm10":
@@ -60,46 +63,85 @@ function getPrimaryPollutant(pollutant) {
     case "o3":
       return "OZONE";
     default:
-      console.log("Unknown pollutant " + pollutant);
+      return "OTHER";
   }
 }
 
-function constructAirQuailityNode(airQualityNode, aqicnData) {
+function constructAirQuailityNode(aqicnData) {
+  let airQualityNode = {
+    isSignificant: true,
+    learnMoreURL: "",
+    primaryPollutant: "",
+    scale: "",
+    categoryIndex: 0,
+    source: "",
+    pollutants: {
+      CO: { name: "CO", amount: 0, unit: "microgramsPerM3" },
+      NO: { name: "NO", amount: 0, unit: "microgramsPerM3" },
+      NO2: { name: "NO2", amount: 0, unit: "microgramsPerM3" },
+      SO2: { name: "SO2", amount: 0, unit: "microgramsPerM3" },
+      NOX: { name: "NOX", amount: 0, unit: "microgramsPerM3" },
+      OZONE: { name: "OZONE", amount: 0, unit: "microgramsPerM3" },
+      PM10: { name: "PM10", amount: 0, unit: "microgramsPerM3" },
+      "PM2.5": { name: "PM2.5", amount: 0, unit: "microgramsPerM3" },
+    },
+    sourceType: "station",
+    metadata: {
+      version: 2,
+      longitude: 0,
+      providerName: "aqicn.org",
+      providerLogo: "https://aqicn.org/mapi/logo.png",
+      language: "en-US",
+      latitude: 0,
+      expireTime: "",
+      reportedTime: "",
+      readTime: "",
+      units: "m",
+    },
+    name: "AirQuality",
+    index: 0,
+  };
   const aqicnIndex = aqicnData.aqi;
 
-  airQualityNode.metadata.latitude = aqicnData.city.geo[0];
-  airQualityNode.metadata.longitude = aqicnData.city.geo[1];
-  airQualityNode.metadata.providerLogo = "https://i.loli.net/2020/12/27/UqW23eZLFAIbxGV.png";
-  airQualityNode.metadata.providerName = "aqicn.org";
-  airQualityNode.categoryIndex = classifyAirQualityLevel(aqicnIndex);
   airQualityNode.index = aqicnIndex;
+  airQualityNode.categoryIndex = classifyAirQualityLevel(aqicnIndex);
   airQualityNode.learnMoreURL = aqicnData.city.url + "/cn/m";
   airQualityNode.scale = AirQualityStandard.US;
   airQualityNode.source = aqicnData.city.name;
   airQualityNode.primaryPollutant = getPrimaryPollutant(aqicnData.dominentpol);
-  airQualityNode.pollutants.NO2.amount = aqicnData.iaqi.no2?.v || -1;
-  airQualityNode.pollutants["PM2.5"].amount = aqicnData.iaqi.pm25?.v || -1;
+
+  airQualityNode.metadata.latitude = aqicnData.city.geo[0];
+  airQualityNode.metadata.longitude = aqicnData.city.geo[1];
+  airQualityNode.metadata.readTime = timeConversion(new Date(), "remain");
+  airQualityNode.metadata.reportedTime = timeConversion(new Date(aqicnData.time.iso), "remain");
+  airQualityNode.metadata.expireTime = timeConversion(new Date(aqicnData.time.iso), "add-1h-floor");
+  airQualityNode.metadata.language = language;
+
+  airQualityNode.pollutants.CO.amount = aqicnData.iaqi.co?.v || -1;
   airQualityNode.pollutants.SO2.amount = aqicnData.iaqi.so2?.v || -1;
+  airQualityNode.pollutants.NO2.amount = aqicnData.iaqi.no2?.v || -1;
+  airQualityNode.pollutants.NOX.amount = aqicnData.iaqi.nox?.v || -1;
+  airQualityNode.pollutants["PM2.5"].amount = aqicnData.iaqi.pm25?.v || -1;
   airQualityNode.pollutants.OZONE.amount = aqicnData.iaqi.o3?.v || -1;
   airQualityNode.pollutants.PM10.amount = aqicnData.iaqi.pm10?.v || -1;
-  airQualityNode.pollutants.CO.amount = aqicnData.iaqi.co?.v || -1;
 
   return airQualityNode;
 }
 
-function roundHours(time, method) {
-  switch (method) {
-    case "up":
-      time.setHours(time.getHours() + Math.ceil(time.getMinutes() / 60));
+function timeConversion(time, action) {
+  switch (action) {
+    case "remain":
+      time.setMilliseconds(0);
       break;
-    case "down":
-      time.setHours(time.getHours() + Math.floor(time.getMinutes() / 60));
+    case "add-1h-floor":
+      time.setHours(time.getHours() + 1);
+      time.setMinutes(0, 0, 0);
       break;
     default:
-      console.log("Error rounding method");
+      console.log("Error time converting action.");
   }
-  time.setMinutes(2, 0, 0);
-  return time;
+  let timeString = time.toISOString().split(".")[0] + "Z";
+  return timeString;
 }
 
 $.get(
