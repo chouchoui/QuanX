@@ -1,3 +1,4 @@
-DOMAIN, hub5idx.v6.shub.sandai.net, Thunder
-DOMAIN, hub5emu.v6.shub.sandai.net, Thunder
-DOMAIN, hub5btmain.v6.shub.sandai.net, Thunder
+DOMAIN,down.sandai.net,DIRECT // 迅雷更新
+DOMAIN,hub5btmain.v6.shub.sandai.net,REJECT // 迅雷版权
+DOMAIN,hub5idx.v6.shub.sandai.net,REJECT // 迅雷版权
+DOMAIN,hub5emu.v6.shub.sandai.net,REJECT // 迅雷版权
