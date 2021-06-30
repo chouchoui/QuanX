@@ -53,7 +53,7 @@ const HandleFuns = [
 ];
 
 const res = $request;
-const resp = $response || null;
+const resp = typeof $response !== "undefined" ? $response : null;
 
 initHandle();
 
