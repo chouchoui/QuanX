@@ -27,27 +27,38 @@ let resultUrl = "";
 if (regexShareHtml.test(url)) {
   if ($response) {
     const body = $response.body;
-    const weiboIdRegex = /onclick="serach\((?<weiboId>.*),(.*),(.*)\)"/;
-    if (weiboIdRegex.test(body)) {
-      const match = weiboIdRegex.exec(body);
+    let match = [];
+    const reg1 = /onclick="serach\((?<weiboId>.*),(.*),(.*)\)"/;
+    const reg2 = /onclick="forward\((.*),(?<weiboId>.*),(.*)\)"/;
+
+    if (reg1.test(body)) {
+      match = reg1.exec(body);
+    } else if (reg2.test(body)) {
+      match = reg2.exec(body);
+    } else {
+      console.log(body);
+      $.notify(`微博重定向错误`, "", "未找到weiboId");
+      $done({});
+    }
+    if (match && match.length > 0) {
       const weiboId = match.groups.weiboId;
       resultUrl = `https://m.weibo.cn/status/${weiboId}`;
-      $.notify(`🔗点击打开微博`, "", resultUrl, resultUrl);
     }
   }
 } else if (regexToast.test(url)) {
   if (["&gsid=", "&toastflag="].every((r) => !url.includes(r))) {
     resultUrl = getParameterByName(url, "toasturl");
-    $.notify(`🔗点击打开微博`, "", resultUrl, resultUrl);
   }
 } else if (regexShare.test(url)) {
   const matchs = url.match(regexShare);
   const weiboId = matchs[5];
   resultUrl = `https://m.weibo.cn/status/${weiboId}`;
-  $.notify(`🔗点击打开微博`, "", resultUrl, resultUrl);
 }
 
-$done({ body: redirectHtml(resultUrl) });
+if (resultUrl) {
+  $.notify(`🔗点击打开微博`, "", resultUrl, resultUrl);
+  $done({ body: redirectHtml(resultUrl) });
+}
 
 function getParameterByName(params, name) {
   var match = RegExp("[?&]" + name + "=([^&]*)").exec(params);
