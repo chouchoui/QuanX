@@ -29,7 +29,7 @@ if (regexShareHtml.test(url)) {
     const body = $response.body;
     let match = [];
     const reg1 = /onclick="serach\((?<weiboId>.*),(.*),(.*)\)"/;
-    const reg2 = /onclick="forward\((.*),(?<weiboId>.*),(.*)\)"/;
+    const reg2 = /onclick="forward\(0,(?<weiboId>.*),(.*)\)"/;
 
     if (reg1.test(body)) {
       match = reg1.exec(body);
