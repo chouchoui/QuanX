@@ -24,7 +24,7 @@ const $ = new Env(ScriptName);
 
 const ScriptIdentifier = "jd_tb_price";
 const ScriptVersion = 2;
-const ScriptUrl = "https://service.2ti.st/QuanX/Script/jd_tb_price";
+const ScriptUrl = `https://service.2ti.st/QuanX/Script/${ScriptIdentifier}`;
 
 const HandleFuns = [
   //JD
@@ -285,48 +285,6 @@ function handleRequest(id, type, callback) {
   });
 }
 
-function checkVersion(callback = () => {}) {
-  let checkVersionKey = `time_${ScriptIdentifier}_checkVersion_lastTime`;
-  let nowTime = new Date().getTime();
-  let isRun = true;
-  let lastTime = $.getdata(checkVersionKey);
-
-  if (lastTime) {
-    lastTime = parseInt(lastTime);
-    $.log("check Version lastTime:" + lastTime);
-    if ((nowTime - lastTime) / 1 / 24 / 60 / 60 / 1000 > 1) {
-      isRun = true;
-    } else {
-      isRun = false;
-    }
-  } else {
-    isRun = true;
-  }
-
-  if (isRun) {
-    $.log("check Version run");
-    $.setdata(String(nowTime), checkVersionKey);
-    $.get({ url: `${ScriptUrl}/config.json`, timeout: 3000 }, (err, resp, data) => {
-      if (err) {
-        $.log("check Version Error:" + err);
-        return;
-      }
-
-      try {
-        let obj = JSON.parse(data);
-        if (ScriptVersion !== obj.version)
-          $.msg(`脚本:${ScriptName} 发现新版本`, `版本号：${obj.version}`, `更新内容：${obj.msg}`);
-      } catch (e) {
-        $.logErr(e, resp);
-      } finally {
-        callback();
-      }
-    });
-  } else {
-    callback();
-  }
-}
-
 function handleBijiago(data) {
   if (!data.success) return data.msg;
 
@@ -490,14 +448,6 @@ function Json2Qs(json) {
   return temp.join("&");
 }
 
-function isUndefined(obj) {
-  return typeof obj === "undefined";
-}
-
-function isNull(obj) {
-  return obj === null;
-}
-
 function time2str(date = +new Date()) {
   return new Date(date).toJSON().substr(0, 19).replace("T", " ").split(" ")[0].replace(/\./g, "-");
 }
@@ -634,6 +584,56 @@ function Base64() {
     }
     return string;
   };
+}
+
+function checkVersion(callback = () => {}) {
+  let checkVersionKey = `time_${ScriptIdentifier}_checkVersion_lastTime`;
+  let nowTime = new Date().getTime();
+  let isRun = true;
+  let lastTime = $.getdata(checkVersionKey);
+
+  if (lastTime) {
+    lastTime = parseInt(lastTime);
+    $.log("check Version lastTime:" + lastTime);
+    if ((nowTime - lastTime) / 1 / 24 / 60 / 60 / 1000 > 1) {
+      isRun = true;
+    } else {
+      isRun = false;
+    }
+  } else {
+    isRun = true;
+  }
+
+  if (isRun) {
+    $.log("check Version run");
+    $.setdata(String(nowTime), checkVersionKey);
+    $.get({ url: `${ScriptUrl}/config.json`, timeout: 3000 }, (err, resp, data) => {
+      if (err) {
+        $.log("check Version Error:" + err);
+        return;
+      }
+
+      try {
+        let obj = JSON.parse(data);
+        if (ScriptVersion !== obj.version)
+          $.msg(`脚本:${ScriptName} 发现新版本`, `版本号：${obj.version}`, `更新内容：${obj.msg}`);
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        callback();
+      }
+    });
+  } else {
+    callback();
+  }
+}
+
+function isUndefined(obj) {
+  return typeof obj === "undefined";
+}
+
+function isNull(obj) {
+  return obj === null;
 }
 
 // prettier-ignore
