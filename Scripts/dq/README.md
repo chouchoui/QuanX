@@ -3,7 +3,7 @@
 ## Surge配置
 ```properties
 [Script]
-DQ点单小程序签到Cookie = type=http-request,requires-body=1,pattern=#^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
+DQ点单小程序签到Cookie = type=http-request,requires-body=1,pattern=^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
 DQ点单小程序签到 = type=cron,cronexp="22 8,9 * * *",wake-system=1,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/dq/dq.sign.js
 
 
