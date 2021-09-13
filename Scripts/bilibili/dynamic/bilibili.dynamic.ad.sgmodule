@@ -1,0 +1,13 @@
+#!name=Bilbili Dynamic
+#!desc=Test Bilbili Dynamic
+
+[General]
+force-http-engine-hosts = %APPEND% app.bilibili.com
+
+[MITM]
+hostname = %APPEND% app.bilibili.com
+tcp-connection = true
+
+[Script]
+Bilbili Dynamic Ad = type=http-response,pattern=^https?:\/\/app\.bilibili\.com\/bilibili\.app\.dynamic\.v2\.Dynamic\/DynAll,requires-body=1,binary-body-mode=1,max-size=-1,timeout=120,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/bilibili/dynamic/bilibili.dynamic.ad.js
+
