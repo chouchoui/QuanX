@@ -23,68 +23,91 @@ const ScriptName = "京东|淘宝 比价";
 const $ = new Env(ScriptName);
 
 const ScriptIdentifier = "jd_tb_price";
-const ScriptVersion = 2;
+const ScriptVersion = 5;
 const ScriptUrl = `https://service.2ti.st/QuanX/Script/${ScriptIdentifier}`;
 
-const HandleFuns = [
+const res = $request;
+const resp = typeof $response !== "undefined" ? $response : null;
+
+let Status = {
+  Enable: 1,
+  Disable: 2,
+};
+
+let Type = {
+  Init: 1,
+  Default: 2,
+  HandleFun: 3,
+};
+
+let MatchType = {
+  None: 1,
+  RegExp: 2,
+  Contains: 3,
+  FullMatch: 4,
+};
+
+const Jobs = [
   //JD
   {
+    name: "serverConfig",
+    status: Status.Enable,
+    type: Type.HandleFun,
+    matchType: MatchType.Contains,
     keyword: "serverConfig",
     fun: handleServerConfig,
   },
-
   {
+    name: "wareBusiness",
+    status: Status.Enable,
+    type: Type.HandleFun,
+    matchType: MatchType.Contains,
     keyword: "wareBusiness",
     fun: handleWareBusiness,
   },
   {
+    name: "basicConfig",
+    status: Status.Enable,
+    type: Type.HandleFun,
+    matchType: MatchType.Contains,
     keyword: "basicConfig",
     fun: handleBasicConfig,
   },
   //TB
   {
+    name: "mobileDispatch",
+    status: Status.Enable,
+    type: Type.HandleFun,
+    matchType: MatchType.Contains,
     keyword: "/amdc/mobileDispatch",
     fun: handleMobileDispatch,
   },
   {
+    name: "getdetail",
+    status: Status.Enable,
+    type: Type.HandleFun,
+    matchType: MatchType.Contains,
     keyword: "/gw/mtop.taobao.detail.getdetail",
     fun: handleGetdetail,
   },
 ];
 
-const res = $request;
-const resp = typeof $response !== "undefined" ? $response : null;
-
-initHandle();
-
-function initHandle() {
-  try {
-    let url = res.url;
-    for (let item of HandleFuns) {
-      if (url.indexOf(item.keyword) !== -1) {
-        checkVersion(item.fun);
-        break;
-      }
-    }
-  } catch (e) {
-    $.logErr(e, "initHandle Error");
-    $.done();
-  }
-}
+initScript();
 
 // Handle JD API ServerConfig
 function handleServerConfig() {
-  $.log("Start Handle ServerConfig");
+  $.log("Start Handle ServerConfig Job");
   let body = JSON.parse(resp.body);
   delete body.serverConfig.httpdns;
   delete body.serverConfig.dnsvip;
   delete body.serverConfig.dnsvip_v6;
+  $.log("Success Handle ServerConfig Job");
   $.done({ body: JSON.stringify(body) });
 }
 
 // Handle JD API WareBusiness
 function handleWareBusiness() {
-  $.log("Start Handle WareBusiness");
+  $.log("Start Handle WareBusiness Job");
   let body = JSON.parse(resp.body);
   let floors = body.floors;
   const commodity_info = floors[floors.length - 1];
@@ -232,8 +255,9 @@ function handleGetdetail() {
         }
 
         setTBItems(consumerProtection.items, createTBItem("价格详情", text));
-        if (consumerProtection.serviceProtection)
+        if (consumerProtection.serviceProtection) {
           setTBItems(consumerProtection.serviceProtection.basicService.services, createTBItem("价格详情", [text]));
+        }
       } catch (e) {
         $.logErr(e, "handleGetdetail handle body error");
       }
@@ -264,8 +288,7 @@ function createTBItem(title, desc) {
 
 function createTBCard(title, text) {
   return {
-    bgIcon:
-      "https://img.alicdn.com/imgextra/i4/O1CN011N7vad1qNigfsKeBP_!!6000000005484-2-tps-710-60.png?getAvatar=avatar",
+    bgIcon: "https://img.alicdn.com/imgextra/i4/O1CN011N7vad1qNigfsKeBP_!!6000000005484-2-tps-710-60.png?getAvatar=avatar",
     icon: "https://s2.ax1x.com/2020/02/16/3STeIJ.png",
     text: text,
     textColor: "#FF3000",
@@ -273,14 +296,14 @@ function createTBCard(title, text) {
   };
 }
 
-function handleRequest(id, type, callback) {
+function handleRequest(id, type, callback, errorCallback) {
   request_history_price(id, type, (data) => {
-    let text = handleBijiago(data);
     try {
+      let text = handleBijiago(data);
       callback(text);
     } catch (e) {
       $.logErr(e, "request_history_price Callback Error");
-      $.done({ body: resp.body });
+      $.done({ body: JSON.stringify(JSON.parse(resp.body)) });
     }
   });
 }
@@ -297,33 +320,49 @@ function handleBijiago(data) {
   let store = obj["store"][1];
 
   let historyObj = {
+    tips: {
+      type: "text",
+      title: "Tips:",
+      text: obj["analysis"]["tip"],
+    },
+    range: {
+      type: "text",
+      title: "价格区间",
+      text: store["price_range"],
+    },
     now: {
-      show: "最新价",
+      type: "price",
+      title: "当前价",
       price: Math.round(store["last_price"] / 100),
       date: "-",
     },
     highest: {
-      show: "最高价",
+      type: "price",
+      title: "最高价",
       price: Math.round(store["highest"]),
       date: time2str(store["max_stamp"] * 1000),
     },
     lowest: {
-      show: "最低价",
+      type: "price",
+      title: "最低价",
       price: Math.round(store["lowest"]),
       date: time2str(parseInt(store["min_stamp"]) * 1000),
     },
     day30: {
-      show: "三十天",
+      type: "price",
+      title: "三十天",
       price: -1,
       date: "-",
     },
     _618: {
-      show: "六一八",
+      type: "price",
+      title: "六一八",
       price: -1,
       date: "-",
     },
     _1111: {
-      show: "双十一",
+      type: "price",
+      title: "双十一",
       price: -1,
       date: "-",
     },
@@ -357,7 +396,8 @@ function handleBijiago(data) {
       historyObj._1111["date"] = date;
     } else
       historyObj.set(show, {
-        show: show,
+        type: "price",
+        title: show,
         price: price,
         date: date,
       });
@@ -369,9 +409,12 @@ function handleBijiago(data) {
     let nowItem = historyObj.now;
     let item = historyObj[key];
 
-    let diff = priceDiff(nowItem.price, item.price);
-
-    result += `${space(item.show, 3 + 4)}${space(item.price, 10)}${space(item.date, 14)}${diff}\n`;
+    if (item.type == "price") {
+      let diff = priceDiff(nowItem.price, item.price);
+      result += `${space(item.title, 3 + 4)}${space(item.price, 10)}${space(item.date, 14)}${diff}\n`;
+    } else if (item.type == "text") {
+      result += `${item.title} ${item.text}\n`;
+    }
   }
 
   return result;
@@ -387,13 +430,12 @@ function request_history_price(id, type, callback) {
   }
 
   const option = {
-    url: `https://browser.bijiago.com/extension/price_towards?url=${encodeURIComponent(item_url)}`,
+    url: `https://browser.bijiago.com/extension/price_towards?url=${encodeURIComponent(item_url)}&format=jsonp&union=union_bijiago&from_device=bijiago&version=${new Date().getTime()}`,
     headers: {
       Connection: "keep-alive",
       "sec-ch-ua": '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
       "sec-ch-ua-mobile": "?0",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
       Accept: "*/*",
       "Sec-Fetch-Site": "cross-site",
       "Sec-Fetch-Mode": "no-cors",
@@ -586,6 +628,96 @@ function Base64() {
   };
 }
 
+function initScript() {
+  try {
+    checkVersion(handleJobs);
+  } catch (e) {
+    $.logErr(e, "initScript Error");
+    $.done();
+  }
+}
+
+function handleJobs() {
+  try {
+    let url = res.url;
+
+    let enable_jobs = [];
+
+    //Handle enable job
+    for (let job of Jobs) {
+      if (job.status === Status.Enable) {
+        enable_jobs.push(job);
+      }
+    }
+
+    //Init None
+    for (let job of Jobs) {
+      if (job.type !== Type.Init) continue;
+      if (job.matchType !== MatchType.None) continue;
+      handleJob(job);
+    }
+
+    //Init Match
+    for (let job of Jobs) {
+      if (job.type !== Type.Init) continue;
+      if (job.matchType === MatchType.None) continue;
+      if (isMatch(job, url)) {
+        handleJob(job);
+      }
+    }
+
+    //Handle Fun
+    let isMatchHandleFun = false;
+    for (let job of Jobs) {
+      if (job.type !== Type.HandleFun) continue;
+      if (job.matchType === MatchType.None) continue;
+      if (isMatch(job, url)) {
+        isMatchHandleFun = true;
+        handleJob(job);
+      }
+    }
+
+    //Handle Default
+    if (!isMatchHandleFun) {
+      for (let job of Jobs) {
+        if (job.type !== Type.Default) continue;
+        if (isMatch(job, url)) {
+          handleJob(job);
+        }
+      }
+    }
+  } catch (e) {
+    $.logErr(e, "handleJobs Error");
+    $.done();
+  }
+}
+
+function isMatch(job, url) {
+  if (job.matchType === MatchType.None) {
+    return true;
+  } else if (job.matchType === MatchType.RegExp) {
+    return url.search(job.keyword) !== -1;
+  } else if (job.matchType === MatchType.Contains) {
+    return url.indexOf(job.keyword) !== -1;
+  } else if (job.matchType === MatchType.FullMatch) {
+    return job.keyword === url;
+  }
+  return false;
+}
+
+function handleJob(job) {
+  try {
+    $.log(`[Handle Job:${job.name}] Start Handle Job`);
+
+    job.fun();
+
+    $.log(`[Handle Job:${job.name}] Success Handle Job`);
+  } catch (e) {
+    $.logErr(e, `[Handle Job:${job.name}] Handle Job Error`);
+    $.done();
+  }
+}
+
 function checkVersion(callback = () => {}) {
   let checkVersionKey = `time_${ScriptIdentifier}_checkVersion_lastTime`;
   let nowTime = new Date().getTime();
@@ -615,8 +747,9 @@ function checkVersion(callback = () => {}) {
 
       try {
         let obj = JSON.parse(data);
-        if (ScriptVersion !== obj.version)
+        if (ScriptVersion !== obj.version) {
           $.msg(`脚本:${ScriptName} 发现新版本`, `版本号：${obj.version}`, `更新内容：${obj.msg}`);
+        }
       } catch (e) {
         $.logErr(e, resp);
       } finally {
