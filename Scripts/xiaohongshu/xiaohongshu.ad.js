@@ -39,7 +39,7 @@ if (regex1.test($request.url)) {
     body = JSON.stringify(body);
     $done({ body });
   } catch (error) {
-    magicJS.logError(`小红书Config出现异常：${err}`);
+    magicJS.logError(`小红书Config出现异常：${error}`);
     $done({});
   }
 }
