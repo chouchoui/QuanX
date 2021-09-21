@@ -28,7 +28,7 @@ if (regex1.test($request.url)) {
   }
 } else if (regex2.test($request.url)) {
   try {
-    let body = JSON.parse(bodyString);
+    let body = JSON.parse(magicJS.response.body);
     const evaluation = JSON.parse(body.data.configs.ios_ep_evaluation);
     evaluation.is_enabled = false;
     evaluation.policies.group_map = {};
