@@ -1,5 +1,6 @@
 # iOS 天气使用最精准的空气质量
 ## 修改自 [Hackl0us](https://github.com/Hackl0us/SS-Rule-Snippet/blob/master/Scripts/Surge/iOS_Weather_AQI_Standard.js) 原始项目
+## 已合并至原始项目，此处将不再维护
 
 1. 改为 Quantumult X 重写订阅
 2. 添加了在 BoxJs 中填写 aqicn.org Token 功能
@@ -8,7 +9,7 @@
 ## 使用说明
 1. 打开 Quantumult X，重写 - 引用 - 添加
 ```
-https://raw.githubusercontent.com/chouchoui/QuanX/master/iOS_Weather_AQI_Standard.conf
+https://raw.githubusercontent.com/Hackl0us/SS-Rule-Snippet/master/Scripts/Surge/weather_aqi_us/iOS_Weather_AQI_US.conf
 ```
 2. 依照自己的 BoxJs 的订阅方式打开 BoxJs
     - http://boxjs.com
@@ -18,8 +19,8 @@ https://raw.githubusercontent.com/chouchoui/QuanX/master/iOS_Weather_AQI_Standar
 
 3. BoxJs 中 订阅 - 添加
 ```
-https://raw.githubusercontent.com/chouchoui/QuanX/master/vei.boxjs.json
+https://raw.githubusercontent.com/Hackl0us/SS-Rule-Snippet/master/Scripts/hackl0us.boxjs.json
 ```
-4. 在 应用 中找到刚订阅的 `chouchoui 应用订阅`，点击下方的 `将 iOS 系统原生 天气 App 的空气质量标准改为 AQI-US` 应用
+4. 在 应用 中找到刚订阅的 `Hackl0us 应用订阅`，点击下方的 `将 iOS 系统原生 天气 App 的空气质量标准改为 AQI-US` 应用
 5. 在 应用设置 的 aqicn API Token 文本框中填入 aqicn.org 申请获得的 Token，保存设置
 6. 在天气应用中查看是否生效
