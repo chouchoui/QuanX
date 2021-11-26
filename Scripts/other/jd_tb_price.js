@@ -23,7 +23,7 @@ const ScriptName = "京东|淘宝 比价";
 const $ = new Env(ScriptName);
 
 const ScriptIdentifier = "jd_tb_price";
-const ScriptVersion = 5;
+const ScriptVersion = 6;
 const ScriptUrl = `https://service.2ti.st/QuanX/Script/${ScriptIdentifier}`;
 
 const res = $request;
@@ -312,40 +312,51 @@ function handleBijiago(data) {
   if (!data.success) return data.msg;
 
   let obj = data.data;
+  let store = {};
 
-  if (obj["store"].length < 2) {
-    return "暂无历史价格信息";
+  if (obj["store"].length == 0) {
+    return "";
+  }
+  if (obj["store"].length == 1) {
+    store = obj["store"][0];
+  } else if (obj["store"].length > 1) {
+    store = obj["store"][1];
   }
 
-  let store = obj["store"][1];
+  let tips = "无tips";
+  if (obj.hasOwnProperty("analysis")) {
+    if (obj["analysis"].hasOwnProperty("tip")) {
+      tips = obj["analysis"]["tip"];
+    }
+  }
 
   let historyObj = {
     tips: {
       type: "text",
       title: "Tips:",
-      text: obj["analysis"]["tip"],
+      text: tips,
     },
     range: {
       type: "text",
       title: "价格区间",
-      text: store["price_range"],
+      text: store.hasOwnProperty("price_range") ? store["price_range"] : "",
     },
     now: {
       type: "price",
       title: "当前价",
-      price: Math.round(store["last_price"] / 100),
+      price: Math.round(parseFloat(store["last_price"]) / 100),
       date: "-",
     },
     highest: {
       type: "price",
       title: "最高价",
-      price: Math.round(store["highest"]),
+      price: Math.round(parseFloat(store["highest"])),
       date: time2str(store["max_stamp"] * 1000),
     },
     lowest: {
       type: "price",
       title: "最低价",
-      price: Math.round(store["lowest"]),
+      price: Math.round(parseFloat(store["lowest"])),
       date: time2str(parseInt(store["min_stamp"]) * 1000),
     },
     day30: {

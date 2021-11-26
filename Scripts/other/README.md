@@ -13,13 +13,3 @@ const resp = isUndefined($response) ? null : $response;
 const resp = typeof $response !== "undefined" ? $response : null;
 ```
 某些地方使用原始代码判断 `undefined` 将导致脚本异常
-
----  
-https://github.com/chouchoui/QuanX/blob/4fb75e7ea188a87e6ac9ae47f9081883a6a0a85b/Scripts/other/jd_tb_price.js#L316
-```js
-// 添加内容
-if (obj["store"].length < 2) {
-    return "暂无历史价格信息";
-}
-```
-某些淘宝商品页不添加以上内容将导致脚本异常
