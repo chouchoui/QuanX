@@ -23,7 +23,7 @@ const ScriptName = "京东|淘宝 比价";
 const $ = new Env(ScriptName);
 
 const ScriptIdentifier = "jd_tb_price";
-const ScriptVersion = 6;
+const ScriptVersion = 7;
 const ScriptUrl = `https://service.2ti.st/QuanX/Script/${ScriptIdentifier}`;
 
 const res = $request;
@@ -317,6 +317,7 @@ function handleBijiago(data) {
   if (obj["store"].length == 0) {
     return "";
   }
+
   if (obj["store"].length == 1) {
     store = obj["store"][0];
   } else if (obj["store"].length > 1) {
@@ -453,6 +454,7 @@ function request_history_price(id, type, callback) {
       "Sec-Fetch-Dest": "script",
       Referer: item_url,
       "Accept-Language": "zh-CN,zh;q=0.9",
+      Cookie: `gwdang_permanent_id=${genUUID()};`,
     },
     timeout: 2000,
   };
@@ -770,6 +772,20 @@ function checkVersion(callback = () => {}) {
   } else {
     callback();
   }
+}
+
+function genUUID() {
+  var s = [];
+  var hexDigits = "0123456789abcdef";
+  for (var i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = "-";
+
+  var uuid = s.join("");
+  return uuid;
 }
 
 function isUndefined(obj) {
