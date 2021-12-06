@@ -23,7 +23,7 @@ const ScriptName = "京东|淘宝 比价";
 const $ = new Env(ScriptName);
 
 const ScriptIdentifier = "jd_tb_price";
-const ScriptVersion = 7;
+const ScriptVersion = 8;
 const ScriptUrl = `https://service.2ti.st/QuanX/Script/${ScriptIdentifier}`;
 
 const res = $request;
@@ -255,9 +255,7 @@ function handleGetdetail() {
         }
 
         setTBItems(consumerProtection.items, createTBItem("价格详情", text));
-        if (consumerProtection.serviceProtection) {
-          setTBItems(consumerProtection.serviceProtection.basicService.services, createTBItem("价格详情", [text]));
-        }
+        if (consumerProtection.serviceProtection) setTBItems(consumerProtection.serviceProtection.basicService.services, createTBItem("价格详情", [text]));
       } catch (e) {
         $.logErr(e, "handleGetdetail handle body error");
       }
@@ -432,6 +430,49 @@ function handleBijiago(data) {
   return result;
 }
 
+function getBijiagoCookie(callback) {
+  let cookie = get_tag("cookie");
+  if (is_tag_exp("cookie") && cookie != "") {
+    callback(cookie);
+    return;
+  }
+
+  $.log("get bijiago cookie");
+
+  const option = {
+    url: `https://browser.bijiago.com/extension?ac=bdextPermanent&format=json&version=${new Date().getTime()}`,
+    headers: {
+      Connection: "keep-alive",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+      Accept: "*/*",
+      "Accept-Language": "zh-CN,zh;q=0.9",
+    },
+    timeout: 2000,
+  };
+
+  $.get(option, (err, rsp, data) => {
+    if (err) {
+      $.log(`Error:${err}`);
+      callback("");
+      return;
+    }
+
+    var cookie = "";
+
+    var cookie_raw = rsp["headers"]["Set-Cookie"];
+
+    cookie_raw.split("path=/,").forEach((item) => {
+      if (item.indexOf("gwdang_permanent") != -1) {
+        cookie += item.split(";")[0] + ";";
+      }
+    });
+
+    set_tag_exp("cookie", cookie, 1000 * 60 * 60 * 12);
+
+    callback(cookie);
+  });
+}
+
 function request_history_price(id, type, callback) {
   let item_url = "";
 
@@ -441,43 +482,45 @@ function request_history_price(id, type, callback) {
     item_url = `https://detail.tmall.com/item.htm?id=${id}`;
   }
 
-  const option = {
-    url: `https://browser.bijiago.com/extension/price_towards?url=${encodeURIComponent(item_url)}&format=jsonp&union=union_bijiago&from_device=bijiago&version=${new Date().getTime()}`,
-    headers: {
-      Connection: "keep-alive",
-      "sec-ch-ua": '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
-      "sec-ch-ua-mobile": "?0",
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
-      Accept: "*/*",
-      "Sec-Fetch-Site": "cross-site",
-      "Sec-Fetch-Mode": "no-cors",
-      "Sec-Fetch-Dest": "script",
-      Referer: item_url,
-      "Accept-Language": "zh-CN,zh;q=0.9",
-      Cookie: `gwdang_permanent_id=${genUUID()};`,
-    },
-    timeout: 2000,
-  };
-
-  $.get(option, (err, rsp, data) => {
-    let result = {
-      success: true,
-      msg: "Success",
-      data: JSON.parse(data),
+  getBijiagoCookie((cookie) => {
+    const option = {
+      url: `https://browser.bijiago.com/extension/price_towards?url=${encodeURIComponent(item_url)}&format=jsonp&union=union_bijiago&from_device=bijiago&version=${new Date().getTime()}`,
+      headers: {
+        Connection: "keep-alive",
+        "sec-ch-ua": '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
+        "sec-ch-ua-mobile": "?0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+        Accept: "*/*",
+        "Sec-Fetch-Site": "cross-site",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Dest": "script",
+        Referer: item_url,
+        "Accept-Language": "zh-CN,zh;q=0.9",
+        Cookie: cookie,
+      },
+      timeout: 2000,
     };
 
-    if (err) {
-      result.success = false;
-      result.msg = "获取价格信息失败";
-      result.data = err;
-    }
+    $.get(option, (err, rsp, data) => {
+      let result = {
+        success: true,
+        msg: "Success",
+        data: JSON.parse(data),
+      };
 
-    if (!result.success) {
-      $.log(`Error:${result}`);
-      $.msg("Error", result.msg, err);
-    }
+      if (err) {
+        result.success = false;
+        result.msg = "获取价格信息失败";
+        result.data = err;
+      }
 
-    callback(result);
+      if (!result.success) {
+        $.log(`Error:${result}`);
+        $.msg("Error", result.msg, err);
+      }
+
+      callback(result);
+    });
   });
 }
 
@@ -731,6 +774,33 @@ function handleJob(job) {
   }
 }
 
+function is_tag_exp(k) {
+  let nowTime = new Date().getTime();
+
+  let kCacheExpirationTime = `time_${ScriptIdentifier}_${k}_cacheExpirationTime`;
+  let vCacheExpirationTime = $.getdata(kCacheExpirationTime);
+
+  if (isNull(vCacheExpirationTime)) {
+    return false;
+  }
+
+  vCacheExpirationTime = parseInt(vCacheExpirationTime);
+
+  return vCacheExpirationTime > nowTime;
+}
+
+function get_tag(k) {
+  return $.getdata(k);
+}
+
+function set_tag_exp(k, v, t) {
+  $.setdata(v, k);
+
+  let kCacheExpirationTime = `time_${ScriptIdentifier}_${k}_cacheExpirationTime`;
+  let vCacheExpirationTime = new Date().getTime() + t;
+  $.setdata(String(vCacheExpirationTime), kCacheExpirationTime);
+}
+
 function checkVersion(callback = () => {}) {
   let checkVersionKey = `time_${ScriptIdentifier}_checkVersion_lastTime`;
   let nowTime = new Date().getTime();
@@ -760,9 +830,7 @@ function checkVersion(callback = () => {}) {
 
       try {
         let obj = JSON.parse(data);
-        if (ScriptVersion !== obj.version) {
-          $.msg(`脚本:${ScriptName} 发现新版本`, `版本号：${obj.version}`, `更新内容：${obj.msg}`);
-        }
+        if (ScriptVersion !== obj.version) $.msg(`脚本:${ScriptName} 发现新版本`, `版本号：${obj.version}`, `更新内容：${obj.msg}`);
       } catch (e) {
         $.logErr(e, resp);
       } finally {
