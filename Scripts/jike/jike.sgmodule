@@ -2,7 +2,7 @@
 #!desc=移除即刻APP动态广场中直播动态
 
 [Rule]
-IP-CIDR,203.107.1.1/24,REJECT-DROP,no-resolve
+IP-CIDR,203.107.1.1/24,REJECT,no-resolve
 
 [URL Rewrite]
 ^https:\/\/api\.ruguoapp\.com\/1\.0\/devices\/collect - reject
