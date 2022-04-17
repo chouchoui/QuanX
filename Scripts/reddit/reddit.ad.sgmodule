@@ -1,0 +1,11 @@
+#!name=Reddit
+#!desc=Reddit 去广告，简单粗暴测试中
+
+[URL Rewrite]
+^https:\/\/api\.zuihuimai\.com - reject
+
+[Script]
+Reddit去广告 = type=http-response,pattern=https:\/\/gql\.reddit\.com,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/reddit/reddit.ad.js
+
+[MITM]
+hostname = %APPEND% gql.reddit.com
