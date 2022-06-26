@@ -1,6 +1,8 @@
 const scriptName = "BiliBili";
 const storyAidKey = "bilibili_story_aid";
 const blackKey = "bilibili_feed_black";
+const bilibili_disable_index_story = "bilibili_disable_index_story";
+const bilibili_enable_mall = "bilibili_enable_mall";
 let magicJS = MagicJS(scriptName, "INFO");
 
 //Customize blacklist
@@ -13,6 +15,9 @@ if (magicJS.read(blackKey)) {
   blacklist = defaultList.split(";");
 }
 
+const disableIndexStory = Boolean(magicJS.read(bilibili_disable_index_story));
+const enableMall = Boolean(magicJS.read(bilibili_enable_mall));
+
 (() => {
   let body = null;
   if (magicJS.isResponse) {
@@ -24,25 +29,18 @@ if (magicJS.read(blackKey)) {
           let items = [];
           for (let item of obj["data"]["items"]) {
             if (item.hasOwnProperty("banner_item")) {
-              let bannerItems = [];
-              for (let banner of item["banner_item"]) {
-                if (banner["type"] === "ad") {
-                  continue;
-                } else if (banner["static_banner"] && banner["static_banner"]["is_ad_loc"] != true) {
-                  bannerItems.push(banner);
-                }
-              }
-              // 去除广告后，如果banner大于等于1个才添加到响应体
-              if (bannerItems.length >= 1) {
-                item["banner_item"] = bannerItems;
-                items.push(item);
-              }
+              continue;
             } else if (
               !item.hasOwnProperty("ad_info") &&
               !blacklist.includes(item["args"]["up_name"]) &&
               item.card_goto.indexOf("ad") === -1 &&
               (item["card_type"] === "small_cover_v2" || item["card_type"] === "large_cover_v1")
             ) {
+              if (disableIndexStory) {
+                if (item.uri.includes("bilibili://story")) {
+                  item.uri = item.uri.replace("bilibili://story", "bilibili://video");
+                }
+              }
               items.push(item);
             }
           }
@@ -142,14 +140,10 @@ if (magicJS.read(blackKey)) {
             741 我的钱包
             742 稿件管理
            */
-          const itemList = new Set([396, 397, 398, 399, 171, 172, 534, 8, 4, 428, 352, 1, 405, 402, 404, 544, 407, 410, 622, 425, 426, 427, 428, 171, 430, 431, 432, 494, 495, 496, 497, 500, 501, 741, 742]);
+          const itemList = new Set([
+            396, 397, 398, 399, 171, 172, 534, 8, 4, 428, 352, 1, 405, 402, 404, 544, 407, 410, 425, 426, 427, 428, 171, 430, 431, 432, 494, 495, 496, 497, 500, 501, 741, 742,
+          ]);
           obj["data"]["sections_v2"].forEach((element, index) => {
-            element["items"].forEach((e) => {
-              if ([497, 622].includes(e["id"])) {
-                e["title"] = "会员购";
-                e["uri"] = "bilibili://mall/home";
-              }
-            });
             let items = element["items"].filter((e) => {
               return itemList.has(e.id);
             });
@@ -158,6 +152,16 @@ if (magicJS.read(blackKey)) {
             delete obj["data"]["sections_v2"][index].tip_icon;
             delete obj["data"]["sections_v2"][index].tip_title;
             obj["data"]["sections_v2"][index]["items"] = items;
+
+            if (element.title === "更多服务" && enableMall) {
+              element.items.unshift({
+                id: 999,
+                title: "会员购",
+                icon: "http://i0.hdslb.com/bfs/archive/19c794f01def1a267b894be84427d6a8f67081a9.png",
+                common_op_item: {},
+                uri: "bilibili://mall/home",
+              });
+            }
           });
           body = JSON.stringify(obj);
         } catch (err) {
