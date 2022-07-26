@@ -1,6 +1,6 @@
 const regexShare = /^https?:\/\/(share|weibointl)\.api\.weibo\.(cn|com)\/(share|portal)(.*)weibo_id=(.*)/;
 const regexToast = /^https:\/\/weibo\.cn\/sinaurl\?toasturl=(.*)/;
-const regexShareHtml = /^https?:\/\/(share|weibointl)\.api\.weibo\.(cn|com)\/share\/[\d]*.html[\/|\?]?$/;
+const regexShareHtml = /^https?:\/\/(share|weibointl)\.api\.weibo\.(cn|com)\/share\/(.*).html/;
 
 const url = $request.url;
 
