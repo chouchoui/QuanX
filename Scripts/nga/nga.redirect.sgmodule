@@ -2,8 +2,9 @@
 #!desc=将多个NGA域名重定向至同一个域名
 
 [URL Rewrite]
-^(http|https):\/\/bbs\.nga\.cn https://ngabbs.com 302
-^(http|https):\/\/nga\.178\.com https://ngabbs.com 302
+^https?:\/\/bbs\.nga\.cn https://ngabbs.com 302
+^https?:\/\/nga\.178\.com https://ngabbs.com 302
+^http:\/\/ngabbs\.com https://ngabbs.com 302
 
 [MITM]
 hostname = %APPEND% nga.178.com, bbs.nga.cn
