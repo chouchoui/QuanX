@@ -10,9 +10,9 @@ $.body = "vei_nga_body";
 
 !(async () => {
   if ($request.body.includes("------WebKitForm")) {
-    const cookie = $request.headers["Cookie"];
-    const contentType = $request.headers["Content-Type"];
-    const userAgent = $request.headers["User-Agent"];
+    const cookie = typeof $request.headers["Cookie"]=='undefined' ? $request.headers["cookie"] : $request.headers["Cookie"];
+    const contentType = typeof $request.headers["Content-Type"]=='undefined' ? $request.headers["content-type"] : $request.headers["Content-Type"];
+    const userAgent = typeof $request.headers["User-Agent"]=='undefined' ? $request.headers["user-agent"] : $request.headers["User-Agent"];
     const body = $request.body;
     var obj = FormDataToObject(body, contentType);
     if (obj["__lib"] === "mission" && obj["__act"] === "get_default") {
