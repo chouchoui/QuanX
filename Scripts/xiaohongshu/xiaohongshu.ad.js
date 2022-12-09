@@ -11,14 +11,15 @@ if (splashReg.test($request.url)) {
   try {
     let body = JSON.parse(magicJS.response.body);
     const nextTime = dayjs().add(20, "year");
-    console.log(`小红书开屏广告去除开始：总计${body.data.ads_groups.length}组，每组广告数量${JSON.stringify(body.data.ads_groups.map((i) => i.ads.length))}，下次再见${nextTime.format("YYYY/MM/DD")}`);
     body.data.ads_groups.forEach((i) => {
       i.start_time = nextTime.valueOf().toString();
       i.end_time = nextTime.add(1, "day").valueOf().toString();
-      i.ads.forEach((j) => {
-        j.start_time = nextTime.valueOf().toString();
-        j.end_time = nextTime.add(1, "day").valueOf().toString();
-      });
+      if(i.ads) {
+        i.ads.forEach((j) => {
+          j.start_time = nextTime.valueOf().toString();
+          j.end_time = nextTime.add(1, "day").valueOf().toString();
+        })
+      };
     });
     body = JSON.stringify(body);
     $done({ body });
