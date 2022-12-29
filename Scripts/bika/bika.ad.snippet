@@ -1,0 +1,9 @@
+;请自行在AdGuard等广告屏蔽软件/内容拦截器里添加以下规则
+;manhuabika.com###homecontentbox
+;manhuabika.com##.catListview>a
+
+hostname=*manhuabika.com
+
+^https:\/\/manhuabika\.com\/ad url reject-array
+https:\/\/api\.manhuabika\.com\/announcements url script-response-body https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/bika/bika.ad.js
+

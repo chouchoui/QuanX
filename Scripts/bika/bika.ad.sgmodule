@@ -1,0 +1,16 @@
+#!name=哔咔去广告
+#!desc=哔咔网页版去广告
+
+
+[URL Rewrite]
+;"https:\/\/manhuabika\.com\/wp-content\/themes\/pic-pwa-pic\/comic\/assets\/js\/page-pcomic-home\.js" - reject
+;请自行在AdGuard等广告屏蔽软件/内容拦截器里添加以下规则
+;manhuabika.com###homecontentbox
+;manhuabika.com##.catListview>a
+[Map Local]
+"^https:\/\/manhuabika\.com\/ad" data="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/blank/blank_array.json"
+[Script]
+哔咔去广告 = type=http-response,pattern=^https:\/\/api\.manhuabika\.com\/announcements,requires-body=1,max-size=-1,debug=1,script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/bika/bika.ad.js
+
+[MITM]
+hostname = %APPEND% *manhuabika.com
