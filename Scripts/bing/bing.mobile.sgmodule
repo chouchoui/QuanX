@@ -1,0 +1,9 @@
+#!name=New Bing for iOS Safari
+#!desc=Bing的iOS Safari的UA改变为Edge移动版
+#!system=ios
+
+[Header Rewrite]
+^https:\/\/www\.bing\.com\/(search|new) header-replace-regex User-Agent Gecko\) "Gecko) EdgiOS/110.0.1587.63"
+
+[MITM]
+hostname = %APPEND% www.bing.com
