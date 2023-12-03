@@ -2,7 +2,7 @@
 #!desc=将 b23.tv 短链重定向至 b23.wtf 防止追踪参数
 
 [URL Rewrite]
-^https?:\/\/b23.tv https://b23.wtf 302
+^https?:\/\/b23.tv https://b23.tf 302
 
 [MITM]
 hostname = %APPEND% b23.tv
