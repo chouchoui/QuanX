@@ -1,0 +1,8 @@
+#!name=小红书 xhslink 短链防追踪重定向
+#!desc=将 xhslink.com 短链重定向至 xhslink.icu 防止追踪参数
+
+[URL Rewrite]
+^https?:\/\/xhslink.com https://xhslink.icu 302
+
+[MITM]
+hostname = %APPEND% xhslink.com
