@@ -3,8 +3,9 @@
 
 [URL Rewrite]
 ^https?:\/\/bbs\.nga\.cn https://ngabbs.com 302
+^https?:\/\/g\.nga\.cn https://ngabbs.com 302
 ^https?:\/\/nga\.178\.com https://ngabbs.com 302
 ^http:\/\/ngabbs\.com https://ngabbs.com 302
 
 [MITM]
-hostname = %APPEND% nga.178.com, bbs.nga.cn
+hostname = %APPEND% nga.178.com, bbs.nga.cn, g.nga.cn
