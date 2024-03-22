@@ -1,6 +1,7 @@
 const $ = new Env("DQ点单小程序签到");
 $.url = "vei_dq_wechat_getSignUrl";
 $.body = "vei_dq_wechat_getSignBody";
+$.headers = "vei_dq_wechat_getSignHeasers";
 
 const isRequest = () => typeof $request !== "undefined" && typeof $response === "undefined";
 const timestamp = new Date().getTime();
@@ -20,7 +21,7 @@ const timestamp = new Date().getTime();
 function getCookie() {
   const regex = /^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign/;
   if (regex.test($request.url)) {
-    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body)) {
+    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body) && $.setdata($request.headers, $.headers)) {
       $.subt = `获取会话: 成功!`;
     } else {
       $.subt = `获取会话: 失败!`;
@@ -35,17 +36,15 @@ function getXueLiSign() {
       const body = JSON.parse($.getdata($.body));
       body.content.timestamp = timestamp;
 
-      const headers = {
-        "Accept-Language": "zh-cn",
-        "Content-Type": "application/json;charset=utf-8",
-        "User-Agent":
-          "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.3(0x18000315) NetType/WIFI Language/zh_CN miniProgram",
-        Connection: "keep-alive",
-      };
+      const headers = JSON.parse($.getdata($.headers));
 
       const options = {
         url: $.getdata($.url),
-        headers: headers,
+        headers: {
+					"Content-Type": headers["content-type"],
+					"User-Agent": headers["user-agent"],
+					"Cookie":headers["cookie"]
+				},
         body: JSON.stringify(body),
       };
       $.post(options, (error, resp, data) => {
