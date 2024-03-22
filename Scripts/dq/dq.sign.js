@@ -1,7 +1,7 @@
 const $ = new Env("DQ点单小程序签到");
 $.url = "vei_dq_wechat_getSignUrl";
 $.body = "vei_dq_wechat_getSignBody";
-$.headers = "vei_dq_wechat_getSignHeasers";
+$.headers = "vei_dq_wechat_getSignHeaders";
 
 const isRequest = () => typeof $request !== "undefined" && typeof $response === "undefined";
 const timestamp = new Date().getTime();
@@ -20,8 +20,12 @@ const timestamp = new Date().getTime();
 
 function getCookie() {
   const regex = /^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign/;
+  const headers = Object.keys($request.headers).reduce<Record<string, any>>(
+    (t, i) => ((t[i.toLowerCase()] = $request.headers[i]), t),
+    {}
+  );
   if (regex.test($request.url)) {
-    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body) && $.setdata($request.headers, $.headers)) {
+    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body) && $.setdata(headers, $.headers)) {
       $.subt = `获取会话: 成功!`;
     } else {
       $.subt = `获取会话: 失败!`;
