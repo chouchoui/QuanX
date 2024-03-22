@@ -25,7 +25,7 @@ function getCookie() {
     {}
   );
   if (regex.test($request.url)) {
-    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body) && $.setdata(headers, $.headers)) {
+    if ($.setdata($request.url, $.url) && $.setdata($request.body, $.body) && $.setdata(JSON.stringify(headers), $.headers)) {
       $.subt = `获取会话: 成功!`;
     } else {
       $.subt = `获取会话: 失败!`;
