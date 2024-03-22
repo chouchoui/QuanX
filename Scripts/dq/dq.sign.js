@@ -20,7 +20,7 @@ const timestamp = new Date().getTime();
 
 function getCookie() {
   const regex = /^https:\/\/wxxcx\.dairyqueen\.com\.cn\/UserXueLi\?_actionName=getXueLiSign/;
-  const headers = Object.keys($request.headers).reduce<Record<string, any>>(
+  const headers = Object.keys($request.headers).reduce(
     (t, i) => ((t[i.toLowerCase()] = $request.headers[i]), t),
     {}
   );
