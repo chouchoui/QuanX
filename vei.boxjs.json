@@ -6,6 +6,15 @@
   "repo": "https://github.com/chouchoui/QuanX",
   "apps": [
     {
+      "id": "vei.nga",
+      "name": "NGA",
+      "keys": ["vei_nga_cookie", "vei_nga_content_type", "vei_nga_user_agent", "vei_nga_mission", "vei_nga_body"],
+      "author": "@chouchoui",
+      "repo": "https://github.com/chouchoui/QuanX/tree/master/Scripts/nga",
+      "icons": ["https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.png", "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.task.png"],
+      "script": "https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.js"
+    },
+    {
       "id": "vei.qmkg",
       "name": "全民K歌",
       "keys": ["vei_qmkg_url", "vei_qmkg_headers", "vei_qmkg_body"],
