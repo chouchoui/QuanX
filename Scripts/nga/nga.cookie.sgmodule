@@ -2,7 +2,7 @@
 #!desc=NGA APP 刮墙签到获取响应头相关信息
 
 [Script]
-NGA刮墙获取Cookie = type=http-response, pattern=^https:\/\/ngabbs.com\/nuke.php\??, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.js
+NGA刮墙获取Cookie = type=http-request, pattern=^https:\/\/ngabbs.com\/nuke.php\??, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/chouchoui/QuanX/master/Scripts/nga/nga.cookie.js
 
 [MITM]
 hostname = %APPEND% ngabbs.com
